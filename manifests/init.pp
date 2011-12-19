@@ -8,7 +8,7 @@ class aegir::frontend {
   package { 'aegir':
     ensure       => present,
     responsefile => 'files/aegir.preseed',
-    require      => Sources_list['aegir-stable'], 
+    require      => Apt::Sources_list['aegir-stable'], 
   }
 }
 
@@ -25,7 +25,7 @@ class aegir::apt {
 
   apt::sources_list { "aegir-stable":
     content => "deb http://debian.aegirproject.org stable main",
-    require => Key['aegir'],
+    require => Apt::Keys::Key['aegir'],
   }
   apt::keys::key { "aegir": source => "puppet:///aegir/debian.aegirproject.org.key" }
 }
