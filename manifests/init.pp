@@ -8,21 +8,8 @@ class aegir {
 
   include apt
 
-  apt::sources {'aegir.list':
-    dir  => '/tmp/vagrant-puppet/modules-0/aegir/files',
-    name => 'aegir',
-  }
-
-  class {'apt::key':
-    dir     => 'files',
-    url     => 'http://debian.aegirproject.org',
-    require => Apt::Sources['aegir.list'],
-#    creates => 'files/key.asc',
-  }
-
-  class {'apt::update':
-    require => Class['apt::key'],
-  }
+  apt::sources_list { "aegir-stable": content => "deb http://debian.aegirproject.org stable main" }
+  apt::keys::key { "aegir": source => "puppet:///koumbit/debian.aegirproject.org.key" }
 
   package {'drush-make':
     ensure  => present,
