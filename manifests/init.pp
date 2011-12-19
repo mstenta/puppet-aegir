@@ -1,17 +1,10 @@
 class aegir {
 
-include aegir::dependencies
-include aegir::sources
-
   package { 'aegir':
     ensure       => present,
     responsefile => 'files/aegir.preseed',
     require      => Class['aegir::dependencies'],
   }
-
-}
-
-class aegir::sources {
 
   include apt
 
@@ -30,10 +23,6 @@ class aegir::sources {
   class {'apt::update':
     require => Class['apt::key'],
   }
-
-}
-
-class aegir::dependencies {
 
   include drush
 
