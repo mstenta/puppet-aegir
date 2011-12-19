@@ -13,9 +13,11 @@ class aegir::frontend {
 }
 
 class aegir::backend {
+
+  include drush
+
   include aegir::apt
 
-  include apt::backports
   package { 'aegir-provision': ensure => present }
 }
 
