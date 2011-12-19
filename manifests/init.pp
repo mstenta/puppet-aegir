@@ -3,7 +3,7 @@ class aegir {
 }
 
 class aegir::frontend {
-  include aegir::apt
+  include aegir::backend
 
   package { 'aegir':
     ensure       => present,
