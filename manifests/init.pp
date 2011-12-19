@@ -11,11 +11,6 @@ class aegir {
   apt::sources_list { "aegir-stable": content => "deb http://debian.aegirproject.org stable main" }
   apt::keys::key { "aegir": source => "puppet:///koumbit/debian.aegirproject.org.key" }
 
-  package {'drush-make':
-    ensure  => present,
-    require => [
-      Class['aegir::sources'],
-    ],
-  }
+  package {'drush-make': ensure  => present, }
 
 }
