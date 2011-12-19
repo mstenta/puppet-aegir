@@ -24,12 +24,9 @@ class aegir {
     require => Class['apt::key'],
   }
 
-  include drush
-
   package {'drush-make':
     ensure  => present,
     require => [
-      Package['drush'],
       Class['aegir::sources'],
     ],
   }
