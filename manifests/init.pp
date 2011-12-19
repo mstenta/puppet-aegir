@@ -18,14 +18,4 @@ class aegir {
     ],
   }
 
-  package {'mysql-server' :
-    ensure       => present,
-    responsefile => 'files/mysql-server.preseed',
-  }
-
-  package {'postfix' :
-    ensure       => present,
-    responsefile => 'files/postfix.preseed',
-  }
-
 }
