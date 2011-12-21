@@ -13,14 +13,15 @@ class aegir::frontend {
 }
 
 class aegir::backend {
-
   include drush
-
   include aegir::apt
 
   package { 'aegir-provision':
     ensure  => present,
-    require => Apt::Sources_list['aegir-stable'], 
+    require => [
+      Apt::Sources_list['aegir-stable'], 
+      Package['drush'],
+      ]
   }
 }
 
