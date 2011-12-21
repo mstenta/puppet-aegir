@@ -18,7 +18,10 @@ class aegir::backend {
 
   include aegir::apt
 
-  package { 'aegir-provision': ensure => present }
+  package { 'aegir-provision':
+    ensure  => present,
+    require => Apt::Sources_list['aegir-stable'], 
+  }
 }
 
 
