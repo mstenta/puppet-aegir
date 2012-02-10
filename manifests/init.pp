@@ -5,6 +5,13 @@ class aegir {
 class aegir::frontend {
   include aegir::backend
 
+  if $aegir_site {
+    exec {'debconf aegir/site':
+      command => "echo debconf aegir/site string $aegir_site | debconf-set-selections",
+      before => Package['aegir'],
+    }
+  }
+
   package { 'aegir':
     ensure       => present,
     responsefile => 'files/aegir.preseed',
