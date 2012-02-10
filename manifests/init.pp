@@ -40,5 +40,5 @@ class aegir::apt {
     content => "deb http://debian.aegirproject.org stable main",
     require => Apt::Keys::Key['aegir'],
   }
-  apt::keys::key { "aegir": source => "puppet:///aegir/debian.aegirproject.org.key" }
+  apt::keys::key { "aegir": source => "puppet:///modules/aegir/debian.aegirproject.org.key" }
 }
