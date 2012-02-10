@@ -11,6 +11,24 @@ class aegir::frontend {
       before => Package['aegir'],
     }
   }
+  if $aegir_db_host {
+    exec {'debconf aegir/db_host':
+      command => "echo debconf aegir/db_host string $aegir_db_host | debconf-set-selections",
+      before => Package['aegir'],
+    }
+  }
+  if $aegir_db_user {
+    exec {'debconf aegir/db_user':
+      command => "echo debconf aegir/db_user string $aegir_db_user | debconf-set-selections",
+      before => Package['aegir'],
+    }
+  }
+  if $aegir_db_password {
+    exec {'debconf aegir/db_password':
+      command => "echo debconf aegir/db_password string $aegir_db_password | debconf-set-selections",
+      before => Package['aegir'],
+    }
+  }
 
   package { 'aegir':
     ensure       => present,
