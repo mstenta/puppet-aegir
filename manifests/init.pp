@@ -29,6 +29,12 @@ class aegir::frontend {
       before => Package['aegir'],
     }
   }
+  if $aegir_email {
+    exec {'debconf aegir/email':
+      command => "echo debconf aegir/email string $aegir_email | debconf-set-selections",
+      before => Package['aegir'],
+    }
+  }
 
   package { 'aegir':
     ensure       => present,
