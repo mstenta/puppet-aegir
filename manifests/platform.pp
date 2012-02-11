@@ -1,20 +1,22 @@
-define aegir::platform ($makefile, $options="", $platforms_dir="/var/aegir/platforms") {
+define aegir::platform ($makefile, $options = "", $platforms_dir = "/var/aegir/platforms") {
+
+  $alias_dir = '/var/aegir/.drush'
+
+  Exec { path        => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ],
+         user        => 'aegir',
+         group       => 'aegir',
+         environment => "HOME=/var/aegir",
+  }
 
   exec {"provision-save-${name}":
-    path        => '/usr/bin:/bin',
-    user        => 'aegir',
-    group       => 'aegir',
-    command     => "drush --root=${platforms_dir}/${name} --context_type='platform' --makefile='${makefile}' provision-save @platform_${name}",
-    environment => "HOME=/var/aegir",
+    command => "drush --root=${platforms_dir}/${name} --context_type='platform' --makefile='${makefile}' provision-save @platform_${name}",
+    creates => "${alias_dir}/platform_${name}.alias.drushrc.php",
   }
 
   exec {"hosting-import-${name}":
-    path        => '/usr/bin:/bin',
-    user        => 'aegir',
-    group       => 'aegir',
-    command     => "drush @hostmaster hosting-import @platform_${name}",
-    environment => "HOME=/var/aegir",
-    require     => Exec["provision-save-${name}"], 
+    command => "drush @hostmaster hosting-import @platform_${name}",
+    require => Exec["provision-save-${name}"], 
+    creates => "${platforms_dir}/${name}",
   }
                           
 }
