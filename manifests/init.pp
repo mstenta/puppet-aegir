@@ -35,6 +35,12 @@ class aegir::frontend {
       before => Package['aegir'],
     }
   }
+  if $aegir_makefile {
+    exec {'debconf aegir/makefile':
+      command => "echo debconf aegir/makefile string $aegir_makefile | debconf-set-selections",
+      before => Package['aegir'],
+    }
+  }
 
   package { 'aegir':
     ensure       => present,
