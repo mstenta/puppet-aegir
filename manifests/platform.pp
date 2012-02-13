@@ -11,7 +11,10 @@ define aegir::platform ($makefile, $options = "", $platforms_dir = "/var/aegir/p
   exec {"provision-save-${name}":
     command => "drush --root=${platforms_dir}/${name} --context_type='platform' --makefile='${makefile}' provision-save @platform_${name}",
     creates => "${alias_dir}/platform_${name}.alias.drushrc.php",
-    require => Class['aegir::backend'],
+    require => [ Class['aegir::backend'],
+                 #TODO: This shouldn't require the front-end, but fails if run before the front-end is installed
+                 Class['aegir::frontend'],
+               ],
   }
 
   exec {"hosting-import-${name}":
