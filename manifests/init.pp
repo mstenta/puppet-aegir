@@ -5,41 +5,14 @@ class aegir {
 class aegir::frontend {
   include aegir::backend
 
-  if $aegir_site {
-    exec {'debconf aegir/site':
-      command => "echo debconf aegir/site string $aegir_site | debconf-set-selections",
-      before => Package['aegir'],
-    }
-  }
-  if $aegir_db_host {
-    exec {'debconf aegir/db_host':
-      command => "echo debconf aegir/db_host string $aegir_db_host | debconf-set-selections",
-      before => Package['aegir'],
-    }
-  }
-  if $aegir_db_user {
-    exec {'debconf aegir/db_user':
-      command => "echo debconf aegir/db_user string $aegir_db_user | debconf-set-selections",
-      before => Package['aegir'],
-    }
-  }
-  if $aegir_db_password {
-    exec {'debconf aegir/db_password':
-      command => "echo debconf aegir/db_password string $aegir_db_password | debconf-set-selections",
-      before => Package['aegir'],
-    }
-  }
-  if $aegir_email {
-    exec {'debconf aegir/email':
-      command => "echo debconf aegir/email string $aegir_email | debconf-set-selections",
-      before => Package['aegir'],
-    }
-  }
-  if $aegir_makefile {
-    exec {'debconf aegir/makefile':
-      command => "echo debconf aegir/makefile string $aegir_makefile | debconf-set-selections",
-      before => Package['aegir'],
-    }
+  if ! ($aegir_manual_build) {
+    Exec { before  => Package['aegir'], }
+    if $aegir_site {        exec {"echo debconf aegir/site string $aegir_site | debconf-set-selections": } }
+    if $aegir_db_host {     exec {"echo debconf aegir/db_host string $aegir_db_host | debconf-set-selections": } }
+    if $aegir_db_user {     exec {"echo debconf aegir/db_user string $aegir_db_user | debconf-set-selections": } }
+    if $aegir_db_password { exec {"echo debconf aegir/db_password string $aegir_db_password | debconf-set-selections": } }
+    if $aegir_email {       exec {"echo debconf aegir/email string $aegir_email | debconf-set-selections": } }
+    if $aegir_makefile {    exec {"echo debconf aegir/makefile string $aegir_makefile | debconf-set-selections": } }
   }
 
   package { 'aegir':
