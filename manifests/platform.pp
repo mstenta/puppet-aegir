@@ -11,12 +11,15 @@ define aegir::platform ($makefile, $options = "", $platforms_dir = "/var/aegir/p
   exec {"provision-save-${name}":
     command => "drush --root=${platforms_dir}/${name} --context_type='platform' --makefile='${makefile}' provision-save @platform_${name}",
     creates => "${alias_dir}/platform_${name}.alias.drushrc.php",
+    require => Class['aegir::backend'],
   }
 
   exec {"hosting-import-${name}":
     command => "drush @hostmaster hosting-import @platform_${name}",
-    require => Exec["provision-save-${name}"], 
     creates => "${platforms_dir}/${name}",
+    require => [ Exec["provision-save-${name}"], 
+                 Class['aegir::frontend'],
+               ],
   }
                           
 }
