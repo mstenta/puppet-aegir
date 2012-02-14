@@ -13,12 +13,15 @@ class aegir::frontend {
     if $aegir_db_password { exec {"echo debconf aegir/db_password string $aegir_db_password | debconf-set-selections": } }
     if $aegir_email {       exec {"echo debconf aegir/email string $aegir_email | debconf-set-selections": } }
     if $aegir_makefile {    exec {"echo debconf aegir/makefile string $aegir_makefile | debconf-set-selections": } }
-  }
 
-  package { 'aegir':
-    ensure       => present,
-    responsefile => 'files/aegir.preseed',
-    require      => Apt::Sources_list['aegir-stable'], 
+    package { 'aegir':
+      ensure       => present,
+      responsefile => 'files/aegir.preseed',
+      require      => Apt::Sources_list['aegir-stable'], 
+    }
+  }
+  else {
+    include aegir::manual_build::frontend
   }
 }
 
