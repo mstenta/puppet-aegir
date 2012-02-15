@@ -112,8 +112,11 @@ class aegir::manual_build::frontend {
   # exec /etc/init.d/mysql restart
 
   # Ref.: http://community.aegirproject.org/installing/manual#Running_hostmaster-install
+  # Note: The chgrp to www-data towards the end of hostmaster-install fails,
+  # and requires the file hacks and apache restart further down. This is likely
+  # due to a bug in how puppet handles exec environments. See: http://projects.puppetlabs.com/issues/5224
   exec {'hostmaster-install':
-    command     => "drush hostmaster-install ${aegir_site} --http_service_type=${aegir::manual_build::http_service_type} --drush_make_version=${aegir::manual_build::drush_make_version} --aegir_db_host=${aegir::manual_build::aegir_db_host} --aegir_db_user=${aegir::manual_build::aegir_db_user} --aegir_db_pass=${aegir::manual_build::aegir_db_password} --client_email=${aegir::manual_build::aegir_email} --client_name=${aegir::manual_build::client_name} --makefile=${aegir::manual_build::aegir_makefile} --script_user=${aegir::manual_build::script_user} --web_group=${aegir::manual_build::web_group} --version=${aegir::manual_build::aegir_version} --aegir_root=${aegir::manual_build::aegir_root} -y > /var/aegir/install.log",
+    command     => "drush hostmaster-install ${aegir_site} --http_service_type=${aegir::manual_build::http_service_type} --drush_make_version=${aegir::manual_build::drush_make_version} --aegir_db_host=${aegir::manual_build::aegir_db_host} --aegir_db_user=${aegir::manual_build::aegir_db_user} --aegir_db_pass=${aegir::manual_build::aegir_db_password} --client_email=${aegir::manual_build::aegir_email} --client_name=${aegir::manual_build::client_name} --makefile=${aegir::manual_build::aegir_makefile} --script_user=${aegir::manual_build::script_user} --web_group=${aegir::manual_build::web_group} --version=${aegir::manual_build::aegir_version} --aegir_root=${aegir::manual_build::aegir_root} -y > /var/aegir/install.log 2>&1",
     creates     => "${aegir::manual_build::aegir_root}/hostmaster-${aegir::manual_build::aegir_version}/sites/${aegir::manual_build::aegir_site}",
     user        => $aegir::manual_build::script_user,
     group       => $aegir::manual_build::script_user,
@@ -126,6 +129,16 @@ class aegir::manual_build::frontend {
                      File['/etc/apache2/conf.d/aegir.conf', '/etc/sudoers.d/aegir.sudo'],
                      Exec['a2enmod rewrite', 'Change MySQL root password'],
                    ],
+  }
+
+  exec {'one-time login':
+    command => 'drush @hostmaster uli',
+    user => $aegir::manual_build::script_user,
+    environment => ["HOME=${aegir::manual_build::aegir_root}"],
+    logoutput => true,
+    loglevel  => 'alert',
+    subscribe   => Exec['apache2ctl graceful'],
+    refreshonly => true,
   }
 
   # TODO: fix hostmaster-install so that none of what follows is necessary

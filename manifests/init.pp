@@ -26,6 +26,17 @@ class aegir::frontend {
     require      => Apt::Sources_list['aegir-stable'], 
   }
 
+  exec {'one-time login':
+    command => 'drush @hostmaster uli',
+    user => 'aegir',
+    environment => ["HOME=/var/aegir"],
+    loglevel => 'alert',
+    logoutput => true,
+    subscribe   => Package['aegir'],
+    refreshonly => true,
+  }
+
+
 }
 
 class aegir::backend {
