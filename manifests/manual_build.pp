@@ -129,39 +129,28 @@ class aegir::manual_build::frontend {
                      File['/etc/apache2/conf.d/aegir.conf', '/etc/sudoers.d/aegir.sudo'],
                      Exec['a2enmod rewrite', 'Change MySQL root password'],
                    ],
-  }
-
-  exec {'one-time login':
-    command => 'drush @hostmaster uli',
-    user => $aegir::manual_build::script_user,
-    environment => ["HOME=${aegir::manual_build::aegir_root}"],
-    logoutput => true,
-    loglevel  => 'alert',
-    subscribe   => Exec['apache2ctl graceful'],
-    refreshonly => true,
+    notify      => Exec[ 'apache2ctl graceful',
+                         "chgrp ${aegir::manual_build::web_group} ${aegir::manual_build::aegir_root}/hostmaster-${aegir::manual_build::aegir_version}/sites/${aegir::manual_build::aegir_site}/settings.php",
+                         "chgrp ${aegir::manual_build::web_group} ${aegir::manual_build::aegir_root}/hostmaster-${aegir::manual_build::aegir_version}/sites/${aegir::manual_build::aegir_site}/files",
+                         "chgrp ${aegir::manual_build::web_group} ${aegir::manual_build::aegir_root}/hostmaster-${aegir::manual_build::aegir_version}/sites/${aegir::manual_build::aegir_site}/private"],
   }
 
   # TODO: fix hostmaster-install so that none of what follows is necessary
-  file { "${aegir::manual_build::aegir_root}/hostmaster-${aegir::manual_build::aegir_version}/sites/${aegir::manual_build::aegir_site}/settings.php":
-    owner   => $aegir::manual_build::script_user,
-    group   => $aegir::manual_build::web_group,
-    mode    => '0644',
-    require => Exec['hostmaster-install'],
+  exec { "chgrp ${aegir::manual_build::web_group} ${aegir::manual_build::aegir_root}/hostmaster-${aegir::manual_build::aegir_version}/sites/${aegir::manual_build::aegir_site}/settings.php":
+    refreshonly => true,
   }
-  file { ["${aegir::manual_build::aegir_root}/hostmaster-${aegir::manual_build::aegir_version}/sites/${aegir::manual_build::aegir_site}/files",
-          "${aegir::manual_build::aegir_root}/hostmaster-${aegir::manual_build::aegir_version}/sites/${aegir::manual_build::aegir_site}/private",
-         ]:
-    owner   => $aegir::manual_build::script_user,
-    group   => $aegir::manual_build::web_group,
-    mode    => '2770',
-    recurse => true,
-    require => Exec['hostmaster-install'],
+  exec { "chgrp ${aegir::manual_build::web_group} ${aegir::manual_build::aegir_root}/hostmaster-${aegir::manual_build::aegir_version}/sites/${aegir::manual_build::aegir_site}/files":
+    refreshonly => true,
+  }
+  exec { "chgrp ${aegir::manual_build::web_group} ${aegir::manual_build::aegir_root}/hostmaster-${aegir::manual_build::aegir_version}/sites/${aegir::manual_build::aegir_site}/private":
+    refreshonly => true,
   }
   exec { 'apache2ctl graceful':
-    require     => File["${aegir::manual_build::aegir_root}/hostmaster-${aegir::manual_build::aegir_version}/sites/${aegir::manual_build::aegir_site}/files",
-                        "${aegir::manual_build::aegir_root}/hostmaster-${aegir::manual_build::aegir_version}/sites/${aegir::manual_build::aegir_site}/private"],
-    subscribe   => Exec['hostmaster-install'], 
+    require     => Exec[ "chgrp ${aegir::manual_build::web_group} ${aegir::manual_build::aegir_root}/hostmaster-${aegir::manual_build::aegir_version}/sites/${aegir::manual_build::aegir_site}/settings.php",
+                         "chgrp ${aegir::manual_build::web_group} ${aegir::manual_build::aegir_root}/hostmaster-${aegir::manual_build::aegir_version}/sites/${aegir::manual_build::aegir_site}/files",
+                         "chgrp ${aegir::manual_build::web_group} ${aegir::manual_build::aegir_root}/hostmaster-${aegir::manual_build::aegir_version}/sites/${aegir::manual_build::aegir_site}/private"],
     refreshonly => true,
+    notify => Exec['login link'],
   }
 
 }

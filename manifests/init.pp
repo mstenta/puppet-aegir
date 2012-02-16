@@ -7,6 +7,8 @@ class aegir {
     include aegir::manual_build
   }
 
+  include aegir::login_link
+
 }
 
 class aegir::frontend {
@@ -24,18 +26,8 @@ class aegir::frontend {
     ensure       => present,
     responsefile => 'files/aegir.preseed',
     require      => Apt::Sources_list['aegir-stable'], 
+    notify => Exec['login link'],
   }
-
-  exec {'one-time login':
-    command => 'drush @hostmaster uli',
-    user => 'aegir',
-    environment => ["HOME=/var/aegir"],
-    loglevel => 'alert',
-    logoutput => true,
-    subscribe   => Package['aegir'],
-    refreshonly => true,
-  }
-
 
 }
 
