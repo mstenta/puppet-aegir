@@ -1,5 +1,8 @@
 class aegir::login_link {
 
+  if $force_login_link { $refreshonly = false }
+  else { $refreshonly = true }
+
   if ! $aegir_user { $aegir_user = 'aegir' }
   if ! $aegir_root { $aegir_root = '/var/aegir' }
 
@@ -9,7 +12,7 @@ class aegir::login_link {
     environment => ["HOME=${aegir_root}"],
     logoutput => true,
     loglevel => 'alert',
-    refreshonly => true,
+    refreshonly => $refreshonly,
   }
 
 }
