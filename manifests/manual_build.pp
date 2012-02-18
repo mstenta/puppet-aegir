@@ -11,7 +11,8 @@ class aegir::manual_build::backend {
   if ! $aegir_user       { $aegir_user = 'aegir' }
   if ! $aegir_root       { $aegir_root = '/var/aegir' }
   if ! $web_group         { $web_group = 'www-data' }
-  if ! $aegir_version { $aegir_version = '6.x-1.6' }
+  if ! ($aegir_version or $aegir_dev_build) { $aegir_version = '6.x-1.6' }
+  elsif $aegir_dev_build { $aegir_version = '6.x-1.x' }
 
   # Ref.: http://community.aegirproject.org/installing/manual#Create_the_Aegir_user
   group {"${aegir_user}":
@@ -31,21 +32,26 @@ class aegir::manual_build::backend {
   }
 
   file { [ "${aegir_root}", "${aegir_root}/.drush" ]:
-    owner => $aegir_user,
-    group => $aegir_user,
+    owner   => $aegir_user,
+    group   => $aegir_user,
     ensure  => directory,
     require => User["${aegir_user}"],
   }
 
   # Ref.: http://community.aegirproject.org/installing/manual#Install_provision
+  if ! $aegir_dev_build { 
+    $command = "drush dl --destination=${aegir_root}/.drush provision-${aegir_version}" }
+  else { 
+    $command = "git clone --branch ${aegir_version} http://git.drupal.org/project/provision.git" }
+
   exec { 'Install provision':
-    command     => "drush dl --destination=${aegir_root}/.drush provision-${aegir_version}",
+    command     => $command,
     creates     => "${aegir_root}/.drush/provision",
     user        => $aegir_user,
     group       => $aegir_user,
     logoutput   => 'on_failure',
     environment => "HOME=${aegir_root}",
-    cwd         => $aegir_root,
+    cwd         => "${aegir_root}/.drush",
     require     => File[ "${aegir_root}", "${aegir_root}/.drush"],
   }
 
@@ -59,23 +65,25 @@ class aegir::manual_build::frontend {
   if ! $aegir_root { $aegir_root = $aegir::manual_build::backend::aegir_root }
   if ! $web_group { $web_group = $aegir::manual_build::backend::web_group }
   if ! $aegir_version { $aegir_version = $aegir::manual_build::backend::aegir_version }
-  #TODO: Build default $aegir_site from FQDN
+  if ! $aegir_site { $aegir_site = $fqdn }
 
   # Ref.: http://community.aegirproject.org/installing/manual#Install_system_requirements
   package { ['apache2', 'php5', 'php5-cli', 'php5-gd', 'php5-mysql', 'postfix', 'sudo', 'rsync', 'git-core', 'unzip']:
-    ensure => present,
+    ensure  => present,
     require => Exec['update_apt'],
   }
 
   # Ref.: http://community.aegirproject.org/installing/manual#Apache_configuration
   exec {'a2enmod rewrite':
-    require => Package['apache2'],
-    unless => 'apache2ctl -M | grep rewrite',
+    require     => Package['apache2'],
+    unless      => 'apache2ctl -M | grep rewrite',
+    refreshonly => true,
   }
   file {"/etc/apache2/conf.d/aegir.conf":
     ensure  => link,
     target  => "${aegir_root}/config/apache.conf",
     require => Package['apache2'],
+    notify  => Exec['a2enmod rewrite'],
   }
 
   # Note: skipping http://community.aegirproject.org/installing/manual#PHP_configuration
@@ -101,24 +109,25 @@ class aegir::manual_build::frontend {
   # due to a bug in how puppet handles exec environments. See: http://projects.puppetlabs.com/issues/5224
 
   # Build our options
-  if $aegir_user {        $a = "--script_user=$aegir_user" }
-  if $aegir_root {        $b = "--aegir_root=$aegir_root" }
-  if $web_group {         $c = "--web_group=$web_group" }
-  if $aegir_version {     $d = "--aegir_version=$aegir_version" }
-  if $aegir_db_host {     $e = "--aegir_db_host=${aegir_db_host}" }
-  if $aegir_db_user {     $f = "--aegir_db_user${aegir_db_user}" }
-  if $aegir_db_password { $g = "--aegir_db_pass=${aegir_db_password}" }
-  if $http_service_type { $h = "--http_service_type=${http_service_type}"} 
-  if $drush_make_version{ $i = "--drush_make_version=${drush_make_version}"}
-  if $client_email {      $j = "--client_email=${client_email}"}
-  if $client_name {       $k = "--client_name=${client_name}"}
-  if $aegir_makefile {    $l = "--makefile=${aegir_makefile}"}
-  if $aegir_host  {       $m = "--aegir_host=${aegir_host}"}
-  $install_options = " ${a} ${b} ${c} ${d} ${e} ${f} ${g} ${h} ${i} ${j} ${k} ${l} ${m}"
+  if $aegir_user {        $a = " --script_user=$aegir_user" }
+  if $aegir_root {        $b = " --aegir_root=$aegir_root" }
+  if $web_group {         $c = " --web_group=$web_group" }
+  if $aegir_version {     $d = " --aegir_version=$aegir_version" }
+  if $aegir_db_host {     $e = " --aegir_db_host=${aegir_db_host}" }
+  if $aegir_db_user {     $f = " --aegir_db_user${aegir_db_user}" }
+  if $aegir_db_password { $g = " --aegir_db_pass=${aegir_db_password}" }
+  if $http_service_type { $h = " --http_service_type=${http_service_type}"} 
+  if $drush_make_version{ $i = " --drush_make_version=${drush_make_version}"}
+  if $client_email {      $j = " --client_email=${client_email}"}
+  if $client_name {       $k = " --client_name=${client_name}"}
+  if $aegir_makefile {    $l = " --makefile=${aegir_makefile}"}
+  if $aegir_host  {       $m = " --aegir_host=${aegir_host}"}
+  if $aegir_dev_build {   $n = " --working-copy"}
+  $install_options = "${a}${b}${c}${d}${e}${f}${g}${h}${i}${j}${k}${l}${m}${n}"
 
   exec {'hostmaster-install':
     command     => "drush hostmaster-install ${aegir_site} $install_options -y > /var/aegir/install.log 2>&1",
-    creates     => "${aegir_root}/hostmaster-${aegir_version}/sites/${aegir_site}",
+    creates     => "${aegir_root}/hostmaster-${aegir_version}",
     user        => $aegir_user,
     group       => $aegir_user,
     logoutput   => 'on_failure',
@@ -128,30 +137,22 @@ class aegir::manual_build::frontend {
                      Package['php5', 'php5-cli', 'php5-gd', 'php5-mysql', 'postfix', 'sudo', 'rsync', 'git-core', 'unzip', 'mysql-server'],
                      User["${aegir_user}"],
                      File['/etc/apache2/conf.d/aegir.conf', '/etc/sudoers.d/aegir.sudo'],
-                     Exec['a2enmod rewrite'], #, 'Change MySQL root password'],
+                     Exec['a2enmod rewrite'],
                    ],
-    notify      => Exec[ 'apache2ctl graceful',
-                         "chgrp ${web_group} ${aegir_root}/hostmaster-${aegir_version}/sites/${aegir_site}/settings.php",
-                         "chgrp ${web_group} ${aegir_root}/hostmaster-${aegir_version}/sites/${aegir_site}/files",
-                         "chgrp ${web_group} ${aegir_root}/hostmaster-${aegir_version}/sites/${aegir_site}/private"],
+    notify      => Exec[ "chgrp on ${aegir_site}" ],
   }
 
   # TODO: fix hostmaster-install so that none of what follows is necessary
-  exec { "chgrp ${web_group} ${aegir_root}/hostmaster-${aegir_version}/sites/${aegir_site}/settings.php":
+  exec { "chgrp on ${aegir_site}":
+    command     => "chgrp ${web_group} ./settings.php ./files/ ./private/",
+    require     => Exec['hostmaster-install'],
+    cwd         => "$aegir_root/hostmaster-${aegir_version}/sites/${aegir_site}",
     refreshonly => true,
-  }
-  exec { "chgrp ${web_group} ${aegir_root}/hostmaster-${aegir_version}/sites/${aegir_site}/files":
-    refreshonly => true,
-  }
-  exec { "chgrp ${web_group} ${aegir_root}/hostmaster-${aegir_version}/sites/${aegir_site}/private":
-    refreshonly => true,
+    notify      => Exec ['apache2ctl graceful'],
   }
   exec { 'apache2ctl graceful':
-    require     => Exec[ "chgrp ${web_group} ${aegir_root}/hostmaster-${aegir_version}/sites/${aegir_site}/settings.php",
-                         "chgrp ${web_group} ${aegir_root}/hostmaster-${aegir_version}/sites/${aegir_site}/files",
-                         "chgrp ${web_group} ${aegir_root}/hostmaster-${aegir_version}/sites/${aegir_site}/private"],
     refreshonly => true,
-    notify => Exec['login link'],
+    notify      => Exec['login link'],
   }
 
 }

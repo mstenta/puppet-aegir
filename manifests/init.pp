@@ -1,6 +1,6 @@
 class aegir {
 
-  if ! ($aegir_manual_build) {
+  if ! ($aegir_manual_build or $aegir_dev_build) {
     include aegir::frontend
   }
   else {
@@ -26,7 +26,7 @@ class aegir::frontend {
     ensure       => present,
     responsefile => 'files/aegir.preseed',
     require      => Apt::Sources_list['aegir-stable'], 
-    notify => Exec['login link'],
+    notify       => Exec['login link'],
   }
 
 }
