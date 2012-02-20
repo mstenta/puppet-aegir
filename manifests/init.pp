@@ -15,12 +15,12 @@ class aegir::frontend {
   include aegir::backend
 
   Exec { before  => Package['aegir'], }
-  if $aegir_site {        exec {"echo debconf aegir/site string $aegir_site | debconf-set-selections": } }
-  if $aegir_db_host {     exec {"echo debconf aegir/db_host string $aegir_db_host | debconf-set-selections": } }
-  if $aegir_db_user {     exec {"echo debconf aegir/db_user string $aegir_db_user | debconf-set-selections": } }
-  if $aegir_db_password { exec {"echo debconf aegir/db_password string $aegir_db_password | debconf-set-selections": } }
-  if $aegir_email {       exec {"echo debconf aegir/email string $aegir_email | debconf-set-selections": } }
-  if $aegir_makefile {    exec {"echo debconf aegir/makefile string $aegir_makefile | debconf-set-selections": } }
+  if $aegir_hostmaster_url { exec {"echo debconf aegir/site string $aegir_hostmaster_url | debconf-set-selections": } }
+  if $aegir_db_host {        exec {"echo debconf aegir/db_host string $aegir_db_host | debconf-set-selections": } }
+  if $aegir_db_user {        exec {"echo debconf aegir/db_user string $aegir_db_user | debconf-set-selections": } }
+  if $aegir_db_password {    exec {"echo debconf aegir/db_password string $aegir_db_password | debconf-set-selections": } }
+  if $aegir_email {          exec {"echo debconf aegir/email string $aegir_email | debconf-set-selections": } }
+  if $aegir_makefile {       exec {"echo debconf aegir/makefile string $aegir_makefile | debconf-set-selections": } }
 
   package { 'aegir':
     ensure       => present,

@@ -1,6 +1,6 @@
 class aegir::login_link {
 
-  if $force_login_link { $refreshonly = false }
+  if $aegir_force_login_link { $refreshonly = false }
   else { $refreshonly = true }
 
   if ! $aegir_user { $aegir_user = 'aegir' }
