@@ -63,14 +63,14 @@ You can:
       $aegir_hostmaster_url = 'aegir.koumbit.org'
 
   * Use a remote database server:
-      $aegir_db_host = 'mysql2.koumbit.org'
+      $aegir_db_host = 'mysql2.koumbit.net'
       $aegir_db_user = 'root'
       $aegir_db_password = 'Pa55w0rd'
 
   * Set the email of the admin user in the Aegir front-end:
       $aegir_email = 'admin@koumbit.org'
 
-  * specify and alternate makefile to build the front-end with:
+  * Specify and alternate makefile to build the front-end with:
       $aegir_makefile = 'alternate-aegir.make'
 
 Aegir can also be installed following the 'manual' instructions
