@@ -9,14 +9,10 @@ class aegir::queue_runner {
 
   Exec { path => '/usr/bin:/bin:/usr/sbin', user => $aegir_user, group => $aegir_user, }
 
-  if ($aegir_manual_build or $aegir_dev_build) { $aegir_installed = Exec['Hostmaster install'] }
-  else { $aegir_installed = Package['aegir'] }
-
-
   drush::dl { 'hosting_queue_runner':
     site_path  => "${aegir_root}/hostmaster-${aegir_version}/sites/${aegir_hostmaster_url}",
     log        => "${aegir_root}/drush.log",
-    require    => $aegir_installed,
+    require    => Class['aegir'],
     notify     => Drush::En['hosting_queue_runner'],
   }
 
