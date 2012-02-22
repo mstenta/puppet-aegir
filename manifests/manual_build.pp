@@ -16,12 +16,12 @@ class aegir::manual_build::backend {
   elsif ! $aegir_version                 { $aegir_version = '6.x-1.6' }
 
   # Ref.: http://community.aegirproject.org/installing/manual#Create_the_Aegir_user
-  group {"${aegir_user}":
+  group {$aegir_user:
     ensure => present,
     system => true,
   }
 
-  user {"${aegir_user}":
+  user {$aegir_user:
     system  => 'true',
     gid     => $aegir_user,
     home    => $aegir_root,
@@ -32,7 +32,7 @@ class aegir::manual_build::backend {
                ],
   }
 
-  file { [ "${aegir_root}", "${aegir_root}/.drush" ]:
+  file { [ $aegir_root, "${aegir_root}/.drush" ]:
     owner   => $aegir_user,
     group   => $aegir_user,
     ensure  => directory,
@@ -136,7 +136,7 @@ class aegir::manual_build::frontend {
     cwd         => $aegir_root,
     require     => [ Class['aegir::manual_build::backend'],
                      Package['php5', 'php5-cli', 'php5-gd', 'php5-mysql', 'postfix', 'sudo', 'rsync', 'git-core', 'unzip', 'mysql-server'],
-                     User["${aegir_user}"],
+                     User[$aegir_user],
                      File['/etc/apache2/conf.d/aegir.conf', '/etc/sudoers.d/aegir.sudo'],
                      Exec['a2enmod rewrite'],
                    ],
@@ -147,7 +147,7 @@ class aegir::manual_build::frontend {
   exec { "chgrp on ${aegir_hostmaster_url}":
     command     => "chgrp ${aegir_web_group} ./settings.php ./files/ ./private/",
     require     => Exec['hostmaster-install'],
-    cwd         => "$aegir_root/hostmaster-${aegir_version}/sites/${aegir_hostmaster_url}",
+    cwd         => "${aegir_root}/hostmaster-${aegir_version}/sites/${aegir_hostmaster_url}",
     refreshonly => true,
     notify      => Exec ['apache2ctl graceful'],
   }
