@@ -75,9 +75,9 @@ You can:
 
 Aegir can also be installed following the 'manual' instructions
 (http://community.aegirproject.org/installing/manual) instead of from packages
-by setting the following variable:
+by using the following class instead of the default 'aegir' class:
 
-    $aegir_manual_build = true
+    include aegir::manual_build
 
 In addition to the options listed above for package-based installations, you
 can:

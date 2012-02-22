@@ -1,6 +1,7 @@
 class aegir::manual_build {
 
   include aegir::manual_build::frontend
+  include aegir::login_link
 
 }
 

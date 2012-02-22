@@ -7,8 +7,6 @@ class aegir {
     include aegir::manual_build
   }
 
-  include aegir::login_link
-
 }
 
 class aegir::frontend {
@@ -28,6 +26,8 @@ class aegir::frontend {
     require      => Apt::Sources_list['aegir-stable'], 
     notify       => Exec['login link'],
   }
+
+  include aegir::login_link
 
 }
 
