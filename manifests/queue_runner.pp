@@ -1,13 +1,13 @@
 class aegir::queue_runner {
 
+  include aegir::defaults
+
 # Set some defaults
   if ! $aegir_user       { $aegir_user = 'aegir' }
   if ! $aegir_root       { $aegir_root = '/var/aegir' }
   if ! ($aegir_version or $aegir_dev_build) { $aegir_version = '6.x-1.6' }
   elsif $aegir_dev_build { $aegir_version = '6.x-1.x' }
   if ! $aegir_hostmaster_url { $aegir_hostmaster_url = $fqdn }
-
-  Exec { path => '/usr/bin:/bin:/usr/sbin', user => $aegir_user, group => $aegir_user, }
 
   drush::dl { 'hosting_queue_runner':
     site_path  => "${aegir_root}/hostmaster-${aegir_version}/sites/${aegir_hostmaster_url}",
