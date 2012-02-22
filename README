@@ -1,0 +1,129 @@
+Aegir Module
+============
+
+This module manages the Aegir Hosting System.
+
+It can install and upgrade Aegir from Debian packages, perform a 'manual'
+installation of Aegir (currently also Debian-only), and optionally install from
+git sources, preserving the .git repos for easy access to an Aegir development
+environment (see http://drupal.org/project/aegir-up for more details). It can
+also manage Hosting Queue Runner, a utility that greatly enhances Aegir's
+usability and scalability. Finally, it provides a method for automating the
+building and importing of Drupal platforms.
+
+
+Dependencies
+------------
+
+The Aegir module depends on:
+ * the Rise-up Labs Shared Common Module (https://labs.riseup.net/code/projects/shared-common)
+ * the Koumbit Apt Module (https://redmine.koumbit.net/projects/puppet-apt)
+ * the Drush Puppet Module (http://drupal.org/project/puppet-drush)
+
+
+Instructions
+------------
+
+To use this module, follow these directions:
+
+1. Your modules directory will need all the files included in this
+   repository placed under a directory called "aegir"
+
+2. Since Debian package installations depends on the Apt module, which in turn
+   depends on some functions provided by the Common module, you'll need to add
+   the following line in your manifests (ideally to manifests/modules.pp):
+
+       import "common"
+
+3. To install Aegir, add the following line to your manifests (ideally in 
+   manifests/site.pp):
+   
+       include aegir
+
+4. To install Hosting Queue Runner, add the following line to your manifests
+   (ideally in manifests/site.pp):
+   
+       include aegir::queue_runner
+
+5. To build platforms and import them into the Aegir front-end, add the lines
+    such as the following to your manifests (ideally in manifests/site.pp):
+ 
+       aegir::platform {'Open_Atrium':
+         makefile => 'http://drupalcode.org/project/openatria_makefiles.git/blob_plain/refs/heads/master:/stub-openatrium.make',
+       }
+
+
+Options, variables and parameters
+---------------------------------
+
+A number of options are available for the package-based installation of Aegir.
+You can:
+
+  * Specify the front-end URL:
+      $aegir_hostmaster_url = 'aegir.koumbit.org'
+
+  * Use a remote database server:
+      $aegir_db_host = 'mysql2.koumbit.org'
+      $aegir_db_user = 'root'
+      $aegir_db_password = 'Pa55w0rd'
+
+  * Set the email of the admin user in the Aegir front-end:
+      $aegir_email = 'admin@koumbit.org'
+
+  * specify and alternate makefile to build the front-end with:
+      $aegir_makefile = 'alternate-aegir.make'
+
+Aegir can also be installed following the 'manual' instructions
+(http://community.aegirproject.org/installing/manual) instead of from packages
+by setting the following variable:
+
+    $aegir_manual_build = true
+
+In addition to the options listed above for package-based installations, you
+can:
+
+  * Set an alternate name for the 'aegir' user:
+      $aegir_user = 'aegir'
+  * Move the Aegir root directory:
+      $aegir_root = '/var/aegir'
+  * Install a version other than the current one:
+      $aegir_version = '6.x-1.6'
+  * Specify a different version of Drush Make to install and use:
+      $aegir_drush_make_version = '6.x-2.3'
+  * Use a different webserver:
+      $aegir_http_service_type = 'apache' 
+      $aegir_web_group = 'www-data'
+
+WARNING! Only change any of the above if you *really* know what you are doing,
+and even then, think twice. Changing these can result in a broken and/or
+unusable Aegir installation.
+
+If you want to develop on Aegir, or try out the latest features, you can build
+'manually' from the latest git repos (N.B. setting this variable forces a
+manual build, and so makes '$aegir_manual_build = true' redundant):
+
+    $aegir_dev_build = true
+
+By default, a one-time login link will be posted following initial
+installation. You can force posting such a link every time the manifest is run
+by setting this variable:
+
+    $aegir_force_login_link = true
+
+Finally, aegir::platform allows for two optional parameters, in addition to the
+required makefile. The first will force completion of platform builds, ignoring
+errors:
+
+    force_complete => true
+
+The second will preserve VCS meta-data for projects built from developer repos,
+rather than tarball packages:
+
+    working_copy => true
+
+
+--------------------------------------------------------------------------------
+Original authors: Christopher Gervais (mailto:chris@koumbit.org)
+                  Antoine Beaupré (mailto:anarcat@koumbit.org)
+Copyright:: Copyright (c) 2011-2012 Réseau Koumbit Networks
+License::   GPLv2 or later
