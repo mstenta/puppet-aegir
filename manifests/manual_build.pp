@@ -94,6 +94,7 @@ class aegir::manual_build::frontend {
     ensure  => present,
     content => "Defaults:${aegir_user}  !requiretty\n
                 ${aegir_user} ALL=NOPASSWD: /usr/sbin/apache2ctl",
+    mode => 440,
   }
 
   # Note: skipping http://community.aegirproject.org/installing/manual#DNS_configuration
