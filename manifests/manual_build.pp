@@ -11,8 +11,8 @@ class aegir::manual_build::backend {
   if ! $aegir_user                             { $aegir_user = 'aegir' }
   if ! $aegir_root                             { $aegir_root = '/var/aegir' }
   if ! $aegir_web_group                   { $aegir_web_group = 'www-data' }
-  if ! ($aegir_version or $aegir_dev_build) { $aegir_version = '6.x-1.6' }
-  elsif $aegir_dev_build                    { $aegir_version = '6.x-1.x' }
+  if $aegir_dev_build                    { $aegir_version = '6.x-1.x' }
+  elsif ! $aegir_version                 { $aegir_version = '6.x-1.6' }
 
   # Ref.: http://community.aegirproject.org/installing/manual#Create_the_Aegir_user
   group {"${aegir_user}":
