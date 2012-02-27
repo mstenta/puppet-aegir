@@ -9,10 +9,13 @@ class aegir::queue_runner {
   elsif $aegir_dev_build { $aegir_version = '6.x-1.x' }
   if ! $aegir_hostmaster_url { $aegir_hostmaster_url = $fqdn }
 
+  if ! $aegir_dev_build { $aegir_installed = Class['aegir::frontend'] }
+  else { $aegir_installed = Class['aegir::manual_build::frontend'] }
+
   drush::dl { 'hosting_queue_runner':
     site_path  => "${aegir_root}/hostmaster-${aegir_version}/sites/${aegir_hostmaster_url}",
     log        => "${aegir_root}/drush.log",
-    require    => Class['aegir'],
+    require    => $aegir_installed,
     notify     => Drush::En['hosting_queue_runner'],
   }
 
