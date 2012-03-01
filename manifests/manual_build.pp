@@ -92,10 +92,9 @@ class aegir::manual_build::frontend {
   # Note: skipping http://community.aegirproject.org/installing/manual#PHP_configuration
 
   # Ref.: http://community.aegirproject.org/installing/manual#Sudo_configuration
-  file {"/etc/sudoers.d/aegir.sudo":
+  file {"/etc/sudoers.d/aegir-sudo":
     ensure  => present,
-    content => "Defaults:${aegir_user}  !requiretty\n
-                ${aegir_user} ALL=NOPASSWD: /usr/sbin/apache2ctl",
+    content => template("aegir/aegir-sudo.erb"),
     mode => 440,
   }
 
@@ -108,9 +107,6 @@ class aegir::manual_build::frontend {
   # exec /etc/init.d/mysql restart
 
   # Ref.: http://community.aegirproject.org/installing/manual#Running_hostmaster-install
-  # Note: The chgrp to www-data towards the end of hostmaster-install fails,
-  # and requires the exec hacks and apache restart further down. This is likely
-  # due to a bug in how puppet handles exec environments. See: http://projects.puppetlabs.com/issues/5224
 
   # Build our options
   if $aegir_user {              $a = " --script_user=${aegir_user}" }
@@ -140,23 +136,10 @@ class aegir::manual_build::frontend {
     require     => [ Class['aegir::manual_build::backend'],
                      Package['php5', 'php5-cli', 'php5-gd', 'php5-mysql', 'postfix', 'sudo', 'rsync', 'git-core', 'unzip', 'mysql-server'],
                      User[$aegir_user],
-                     File['/etc/apache2/conf.d/aegir.conf', '/etc/sudoers.d/aegir.sudo'],
+                     File['/etc/apache2/conf.d/aegir.conf', '/etc/sudoers.d/aegir-sudo'],
                      Exec['a2enmod rewrite'],
                    ],
-    notify      => Exec[ "chgrp on ${aegir_hostmaster_url}" ],
-  }
-
-  # TODO: fix hostmaster-install so that none of what follows is necessary
-  exec { "chgrp on ${aegir_hostmaster_url}":
-    command     => "chgrp ${aegir_web_group} ./settings.php ./files/ ./private/",
-    require     => Exec['hostmaster-install'],
-    cwd         => "${aegir_root}/hostmaster-${aegir_version}/sites/${aegir_hostmaster_url}",
-    refreshonly => true,
-    notify      => Exec ['apache2ctl graceful'],
-  }
-  exec { 'apache2ctl graceful':
-    refreshonly => true,
-    notify      => Exec['login link'],
+    notify      => Exec['login link'], 
   }
 
 }
