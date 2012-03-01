@@ -9,11 +9,13 @@ class aegir::manual_build::backend {
   include drush
 
   # Set some defaults
-  if ! $aegir_user                             { $aegir_user = 'aegir' }
-  if ! $aegir_root                             { $aegir_root = '/var/aegir' }
-  if ! $aegir_web_group                   { $aegir_web_group = 'www-data' }
-  if $aegir_dev_build                    { $aegir_version = '6.x-1.x' }
-  elsif ! $aegir_version                 { $aegir_version = '6.x-1.6' }
+  if ! $aegir_user                         { $aegir_user = 'aegir' }
+  if ! $aegir_root                         { $aegir_root = '/var/aegir' }
+  if ! $aegir_web_group               { $aegir_web_group = 'www-data' }
+  if $aegir_dev_build                   { $aegir_version = '6.x-1.x' }
+  elsif ! $aegir_version                { $aegir_version = '6.x-1.6' }
+  if ! $aegir_provision_repo     { $aegir_provision_repo = 'http://git.drupal.org/project/provision.git' }
+  if ! $aegir_provision_branch { $aegir_provision_branch = $aegir_version }
 
   # Ref.: http://community.aegirproject.org/installing/manual#Create_the_Aegir_user
   group {$aegir_user:
@@ -43,7 +45,7 @@ class aegir::manual_build::backend {
   if ! $aegir_dev_build { 
     $command = "drush dl --destination=${aegir_root}/.drush provision-${aegir_version}" }
   else { 
-    $command = "git clone --branch ${aegir_version} http://git.drupal.org/project/provision.git" }
+    $command = "git clone --branch ${aegir_provision_branch} ${aegir_provision_repo} provision" }
 
   exec { 'Install provision':
     command     => $command,
