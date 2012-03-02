@@ -1,7 +1,7 @@
 class aegir::queue_runner inherits aegir::defaults {
 
   # Set some additional defaults
-  if $aegir_dev_build    { $aegir_version = '6.x-1.x' }
+  if ($aegir_dev_build and ! $aegir_version)   { $aegir_version = '6.x-1.x' }
   elsif ! $aegir_version { $aegir_version = '6.x-1.6' }
   if ! $aegir_hostmaster_url { $aegir_hostmaster_url = $fqdn }
 
