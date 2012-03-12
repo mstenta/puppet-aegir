@@ -13,7 +13,7 @@ class aegir::manual_build::backend {
   if ! $aegir_root                         { $aegir_root = '/var/aegir' }
   if ! $aegir_web_group               { $aegir_web_group = 'www-data' }
   if $aegir_dev_build                   { $aegir_version = '6.x-1.x' }
-  elsif ! $aegir_version                { $aegir_version = '6.x-1.6' }
+  elsif ! $aegir_version                { $aegir_version = '6.x-1.7' }
   if ! $aegir_provision_repo     { $aegir_provision_repo = 'http://git.drupal.org/project/provision.git' }
   if ! $aegir_provision_branch { $aegir_provision_branch = $aegir_version }
 
