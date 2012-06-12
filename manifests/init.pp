@@ -22,7 +22,9 @@ class aegir::frontend {
   package { 'aegir':
     ensure       => present,
     responsefile => 'files/aegir.preseed',
-    require      => Apt::Sources_list['aegir-stable'], 
+    require      => [ Apt::Sources_list['aegir-stable'],
+                      Exec['update_apt'],
+                    ],
     notify       => Exec['login link'],
   }
 
