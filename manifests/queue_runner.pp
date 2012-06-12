@@ -22,7 +22,8 @@ class aegir::queue_runner inherits aegir::defaults {
   }
 
   file {'hosting-queue-runner init script':
-    source  => "${aegir_root}/hostmaster-${aegir_version}/sites/${aegir_hostmaster_url}/modules/hosting_queue_runner/init.d.example",
+    # ref.: http://drupalcode.org/project/hosting_queue_runner.git/blob_plain/refs/heads/6.x-1.x:/init.d.example
+    source  => "puppet:///modules/aegir/init.d.example",
     path    => "/etc/init.d/hosting-queue-runner",
     mode    => '755',
     ensure  => present,
