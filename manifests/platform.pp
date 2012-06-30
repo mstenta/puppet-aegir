@@ -2,8 +2,15 @@ define aegir::platform ($makefile, $force_complete = false, $working_copy = fals
 
   if ! $aegir_root { $aegir_root = '/var/aegir' }
   if ! $aegir_user { $aegir_user = 'aegir' }
+  if ! $aegir_dev_build { $aegir_installed = Class['aegir::frontend'] }
+  else { $aegir_installed = Class['aegir::manual_build::frontend'] }
 
-  include aegir::defaults
+  Exec { path        => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ],
+         user        => $aegir_user,
+         group       => $aegir_user,
+         environment => "HOME=${aegir_root}",
+         provider    => 'shell',
+  }
 
   exec {"provision-save-${name}":
     command => "drush --root=${aegir_root}/platforms/${name} --context_type='platform' --makefile='${makefile}' provision-save @platform_${name}",
