@@ -16,7 +16,8 @@ class aegir::defaults {
          user        => $aegir_user,
          group       => $aegir_user,
          environment => "HOME=${aegir_root}",
-         provider    => 'shell',
+# Bug in Puppet 2.6? http://projects.puppetlabs.com/issues/4416
+#         provider    => 'shell',
   }
 
 }
