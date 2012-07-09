@@ -41,7 +41,7 @@ define aegir::platform ($makefile, $force_complete = false, $working_copy = fals
     command => "drush @hostmaster hosting-import @platform_${name}",
     require => [ Exec["drush make ${name}"],
                  Exec["provision-save-${name}"],
-               ]
+               ],
     refreshonly => true,
   }
                           
