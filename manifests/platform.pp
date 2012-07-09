@@ -1,4 +1,4 @@
-define aegir::platform ($makefile, $force_complete = false, $working_copy = false) {
+define aegir::platform ($makefile, $force_complete = false, $working_copy = false, $build_timeout = '300') {
 
   if ! $aegir_root { $aegir_root = '/var/aegir' }
   if ! $aegir_user { $aegir_user = 'aegir' }
@@ -10,12 +10,6 @@ define aegir::platform ($makefile, $force_complete = false, $working_copy = fals
          group       => $aegir_user,
          environment => "HOME=${aegir_root}",
   #       provider    => 'shell',
-  }
-
-  exec {"provision-save-${name}":
-    command => "drush --root=${aegir_root}/platforms/${name} --context_type='platform' --makefile='${makefile}' provision-save @platform_${name}",
-    creates => "${aegir_root}/.drush/platform_${name}.alias.drushrc.php",
-    require => $aegir_installed,
   }
 
   if $force_complete { $force_opt = ' --force-complete' }
@@ -30,13 +24,24 @@ define aegir::platform ($makefile, $force_complete = false, $working_copy = fals
     command => "drush make $makefile ${name} $force_opt $working_opt",
     creates => "${aegir_root}/platforms/${name}",
     cwd     => "${aegir_root}/platforms",
-    require => Exec["provision-save-${name}"],
+    require => $aegir_installed,
+    timeout => $build_timeout,
+    notify  => Exec["provision-save-${name}"],
+  }
+
+  exec {"provision-save-${name}":
+    command => "drush --root=${aegir_root}/platforms/${name} --context_type='platform' --makefile='${makefile}' provision-save @platform_${name}",
+    creates => "${aegir_root}/.drush/platform_${name}.alias.drushrc.php",
+    require => Exec["drush make ${name}"],
+    refreshonly => true,
     notify  => Exec["hosting-import-${name}"],
   }
 
   exec {"hosting-import-${name}":
     command => "drush @hostmaster hosting-import @platform_${name}",
-    require => Exec["drush make ${name}"],
+    require => [ Exec["drush make ${name}"],
+                 Exec["provision-save-${name}"],
+               ]
     refreshonly => true,
   }
                           
