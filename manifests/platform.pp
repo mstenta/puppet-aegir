@@ -9,7 +9,7 @@ define aegir::platform ($makefile, $force_complete = false, $working_copy = fals
          user        => $aegir_user,
          group       => $aegir_user,
          environment => "HOME=${aegir_root}",
-         provider    => 'shell',
+  #       provider    => 'shell',
   }
 
   exec {"provision-save-${name}":
