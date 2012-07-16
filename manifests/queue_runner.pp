@@ -27,8 +27,6 @@ class aegir::queue_runner inherits aegir::defaults {
     enable    => true,
     subscribe => File['hosting-queue-runner init script'],
     require   => Drush::En['hosting_queue_runner'],
-    # TODO: remove this line once http://drupal.org/node/1404226 is fixed
-    status    => 'ps aux | grep hosting-queue-runner',
   }
 
 }
