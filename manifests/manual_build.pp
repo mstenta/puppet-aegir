@@ -96,9 +96,9 @@ class aegir::manual_build::frontend {
   # Note: skipping http://community.aegirproject.org/installing/manual#PHP_configuration
 
   # Ref.: http://community.aegirproject.org/installing/manual#Sudo_configuration
-  file {"/etc/sudoers.d/aegir-sudo":
+  file {"/etc/sudoers.d/aegir":
     ensure  => present,
-    content => template("aegir/aegir-sudo.erb"),
+    content => "aegir ALL=NOPASSWD: /usr/sbin/apache2ctl\n",
     mode => 440,
   }
 
@@ -140,7 +140,7 @@ class aegir::manual_build::frontend {
     require     => [ Class['aegir::manual_build::backend'],
                      Package['php5', 'php5-cli', 'php5-gd', 'php5-mysql', 'postfix', 'sudo', 'rsync', 'git-core', 'unzip', 'mysql-server'],
                      User[$aegir_user],
-                     File['/etc/apache2/conf.d/aegir.conf', '/etc/sudoers.d/aegir-sudo'],
+                     File['/etc/apache2/conf.d/aegir.conf', '/etc/sudoers.d/aegir'],
                      Exec['a2enmod rewrite'],
                    ],
     notify      => Exec['login link'], 
