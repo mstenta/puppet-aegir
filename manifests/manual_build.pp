@@ -75,7 +75,7 @@ class aegir::manual_build::frontend {
   if ! $aegir_hostmaster_url { $aegir_hostmaster_url = $fqdn }
 
   # Ref.: http://community.aegirproject.org/installing/manual#Install_system_requirements
-  package { ['apache2', 'php5', 'php5-cli', 'php5-gd', 'php5-mysql', 'postfix', 'sudo', 'rsync', 'git-core', 'unzip']:
+  package { ['apache2', 'php5', 'php5-cli', 'php5-gd', 'php5-mysql', 'postfix', 'sudo', 'rsync',/* 'git-core',*/ 'unzip']:
     ensure  => present,
     require => Exec['update_apt'],
   }
