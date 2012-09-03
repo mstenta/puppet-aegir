@@ -132,7 +132,7 @@ class aegir::manual_build::frontend {
   $install_options = "${a}${b}${c}${d}${e}${f}${g}${h}${i}${j}${k}${l}${m}${n}"
 
   exec {'hostmaster-install':
-    command     => "drush hostmaster-install ${aegir_hostmaster_url} $install_options -y > /var/aegir/install.log 2>&1",
+    command     => "drush --strict=0 hostmaster-install ${aegir_hostmaster_url} $install_options -y --debug > /var/aegir/install.log 2>&1",
     creates     => "${aegir_root}/hostmaster-${aegir_version}",
     user        => $aegir_user,
     group       => $aegir_user,
