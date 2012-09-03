@@ -145,7 +145,8 @@ class aegir::manual_build::frontend {
                      File['/etc/apache2/conf.d/aegir.conf', '/etc/sudoers.d/aegir'],
                      Exec['a2enmod rewrite'],
                    ],
-    notify      => Exec['login link'], 
+    notify      => Exec['login link'],
+    timeout     => 0,
   }
 
 }
