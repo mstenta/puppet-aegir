@@ -60,6 +60,7 @@ class aegir::manual_build::backend {
     environment => "HOME=${aegir_root}",
     cwd         => "${aegir_root}/.drush",
     require     => File[ "${aegir_root}", "${aegir_root}/.drush"],
+    timeout     => 0,
   }
 
 }
