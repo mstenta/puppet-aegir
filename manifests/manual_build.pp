@@ -118,7 +118,7 @@ class aegir::manual_build::frontend {
   if $aegir_user {              $a = " --script_user=${aegir_user}" }
   if $aegir_root {              $b = " --aegir_root=${aegir_root}" }
   if $aegir_web_group {         $c = " --web_group=${aegir_web_group}" }
-  if $aegir_version {           $d = " --aegir_version=${aegir_version}" }
+#  if $aegir_version {           $d = " --aegir_version=${aegir_version}" }
   if $aegir_db_host {           $e = " --aegir_db_host=${aegir_db_host}" }
   if $aegir_db_user {           $f = " --aegir_db_user${aegir_db_user}" }
   if $aegir_db_password {       $g = " --aegir_db_pass=${aegir_db_password}" }
@@ -132,7 +132,7 @@ class aegir::manual_build::frontend {
   $install_options = "${a}${b}${c}${d}${e}${f}${g}${h}${i}${j}${k}${l}${m}${n}"
 
   exec {'hostmaster-install':
-    command     => "drush --strict=0 hostmaster-install ${aegir_hostmaster_url} $install_options -y --debug > /var/aegir/install.log 2>&1",
+    command     => "drush -y --debug hostmaster-install ${aegir_hostmaster_url} $install_options > /var/aegir/install.log 2>&1",
     creates     => "${aegir_root}/hostmaster-${aegir_version}",
     user        => $aegir_user,
     group       => $aegir_user,
