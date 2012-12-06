@@ -118,7 +118,7 @@ class aegir::manual_build::frontend {
   if $aegir_user {              $a = " --script_user=${aegir_user}" }
   if $aegir_root {              $b = " --aegir_root=${aegir_root}" }
   if $aegir_web_group {         $c = " --web_group=${aegir_web_group}" }
-  if $aegir_version {           $d = " --aegir_version=${aegir_version}" }
+#  if $aegir_version {           $d = " --aegir_version=${aegir_version}" }
   if $aegir_db_host {           $e = " --aegir_db_host=${aegir_db_host}" }
   if $aegir_db_user {           $f = " --aegir_db_user${aegir_db_user}" }
   if $aegir_db_password {       $g = " --aegir_db_pass=${aegir_db_password}" }
