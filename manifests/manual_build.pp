@@ -19,7 +19,7 @@ class aegir::manual_build::backend {
 
   # Ref.: http://community.aegirproject.org/installing/manual#Create_the_Aegir_user
   if ! $aegir_user_exists {
-  
+
     group {$aegir_user:
       ensure => present,
       system => true,
@@ -35,7 +35,7 @@ class aegir::manual_build::backend {
                    Group["${aegir_user}"],
                  ],
     }
-  
+
   }
 
   file { [ $aegir_root, "${aegir_root}/.drush" ]:
@@ -46,9 +46,9 @@ class aegir::manual_build::backend {
   }
 
   # Ref.: http://community.aegirproject.org/installing/manual#Install_provision
-  if ! $aegir_dev_build { 
+  if ! $aegir_dev_build {
     $command = "drush dl --destination=${aegir_root}/.drush provision-${aegir_version}" }
-  else { 
+  else {
     $command = "git clone --branch ${aegir_provision_branch} ${aegir_provision_repo} provision" }
 
   exec { 'Install provision':
@@ -109,7 +109,7 @@ class aegir::manual_build::frontend {
   # Ref.: http://community.aegirproject.org/installing/manual#Database_configuration
   package {'mysql-server': }
   # Note: Skipping the below (for now)
-  # comment out 'bind-address = 127.0.0.1' from /etc/mysql/my.cnf 
+  # comment out 'bind-address = 127.0.0.1' from /etc/mysql/my.cnf
   # exec /etc/init.d/mysql restart
 
   # Ref.: http://community.aegirproject.org/installing/manual#Running_hostmaster-install
@@ -122,7 +122,7 @@ class aegir::manual_build::frontend {
   if $aegir_db_host {           $e = " --aegir_db_host=${aegir_db_host}" }
   if $aegir_db_user {           $f = " --aegir_db_user${aegir_db_user}" }
   if $aegir_db_password {       $g = " --aegir_db_pass=${aegir_db_password}" }
-  if $aegir_http_service_type { $h = " --http_service_type=${aegir_http_service_type}"} 
+  if $aegir_http_service_type { $h = " --http_service_type=${aegir_http_service_type}"}
   if $aegir_drush_make_version{ $i = " --drush_make_version=${aegir_drush_make_version}"}
   if $aegir_client_email {      $j = " --client_email=${aegir_client_email}"}
   if $aegir_client_name {       $k = " --client_name=${aegir_client_name}"}
