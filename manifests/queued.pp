@@ -11,6 +11,8 @@ class aegir::queued inherits aegir::defaults {
     source  => "puppet:///modules/aegir/init.d.example-new",
     path    => "/etc/init.d/hosting-queued",
     mode    => '755',
+    owner   => 'root',
+    group   => 'root',
     ensure  => present,
   }
 

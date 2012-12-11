@@ -18,6 +18,8 @@ class aegir::queue_runner inherits aegir::defaults {
     source  => "puppet:///modules/aegir/init.d.example",
     path    => "/etc/init.d/hosting-queue-runner",
     mode    => '755',
+    owner   => 'root',
+    group   => 'root',
     ensure  => present,
     require => Drush::Dl['hosting_queue_runner'],
   }
