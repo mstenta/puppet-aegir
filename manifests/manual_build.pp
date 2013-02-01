@@ -107,7 +107,10 @@ class aegir::manual_build::frontend {
   # Note: skipping http://community.aegirproject.org/installing/manual#DNS_configuration
 
   # Ref.: http://community.aegirproject.org/installing/manual#Database_configuration
-  package {'mysql-server': }
+  package {'mysql-server':
+    ensure  => present,
+    require => Exec['update_apt'],
+  }
   # Note: Skipping the below (for now)
   # comment out 'bind-address = 127.0.0.1' from /etc/mysql/my.cnf
   # exec /etc/init.d/mysql restart
