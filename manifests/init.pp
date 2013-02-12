@@ -1,7 +1,9 @@
-class aegir {
+class aegir ( $dist = 'stable' ) {
 
   if ! ($aegir_manual_build or $aegir_dev_build) {
-    include aegir::frontend
+    class { 'aegir::frontend':
+      dist => $dist,
+    }
   }
   else {
     include aegir::manual_build
@@ -9,8 +11,10 @@ class aegir {
 
 }
 
-class aegir::frontend {
-  include aegir::backend
+class aegir::frontend ( $dist = 'stable' ) {
+  class { 'aegir::backend' :
+    dist => $dist,
+  }
 
   if $aegir_hostmaster_url { exec {"echo debconf aegir/site string $aegir_hostmaster_url | debconf-set-selections": before  => Package['aegir'], } }
   if $aegir_db_host {        exec {"echo debconf aegir/db_host string $aegir_db_host | debconf-set-selections": before  => Package['aegir'], } }
@@ -32,24 +36,26 @@ class aegir::frontend {
 
 }
 
-class aegir::backend {
+class aegir::backend ( $dist = 'stable' ) {
   include drush
-  include aegir::apt
+  class { 'aegir::apt' :
+    dist => $dist,
+  }
 
-  package { 'aegir-provision':
+  package { 'aegir-provision' :
     ensure  => present,
-    require => [ Apt::Sources_list['aegir-stable'], 
+    require => [ Apt::Sources_list["aegir-${dist}"],
                  Package['drush'],
                ],
   }
 }
 
 
-class aegir::apt {
+class aegir::apt ( $dist = 'stable' ) {
   include apt
 
-  apt::sources_list { "aegir-stable":
-    content => "deb http://debian.aegirproject.org stable main",
+  apt::sources_list { "aegir-${dist}":
+    content => "deb http://debian.aegirproject.org ${dist} main",
     require => Apt::Keys::Key['aegir'],
   }
   apt::keys::key { "aegir": source => "puppet:///modules/aegir/debian.aegirproject.org.key" }
