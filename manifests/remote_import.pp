@@ -9,8 +9,9 @@ class aegir::remote_import inherits aegir::defaults {
   }
 */
 
-  exec {'remote_import':
-    command => "git clone --recursive --branch 6.x-1.x http://git.drupal.org/project/remote_import.git",
+  exec {'clone remote_import':
+    # Here we're using a sandbox that has a patch applied.
+    command => "git clone --branch 1663066 http://git.drupal.org/sandbox/ergonlogic/1681684.git remote_import",
     cwd     => "/usr/share/drush/commands/provision/",
     user    => 'root',
     group   => 'root',
@@ -29,8 +30,8 @@ class aegir::remote_import inherits aegir::defaults {
     notify     => Drush::En['hosting_remote_import'],
   }
 */
-  exec {'hosting_remote_import':
-    command => "git clone --recursive --branch 6.x-1.x http://git.drupal.org/project/hosting_remote_import.git",
+  exec {'clone hosting_remote_import':
+    command => "git clone --branch 6.x-1.x http://git.drupal.org/project/hosting_remote_import.git",
     cwd     => "${aegir_root}/hostmaster-${aegir_version}/sites/${aegir_hostmaster_url}/modules",
     creates => "${aegir_root}/hostmaster-${aegir_version}/sites/${aegir_hostmaster_url}/modules/hosting_remote_import",
     require => [ $aegir_installed,
