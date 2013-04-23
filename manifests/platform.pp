@@ -20,6 +20,8 @@ define aegir::platform ($makefile, $force_complete = false, $working_copy = fals
   # --working-copy or --force-complete settings and pass them to
   # drush make. hosting-import (below) will make the frontend run
   # provision-verify through the queue eventually anyways.    
+
+  /*
   exec {"drush make ${name}":
     command => "drush make $makefile ${name} $force_opt $working_opt",
     creates => "${aegir_root}/platforms/${name}",
@@ -28,21 +30,19 @@ define aegir::platform ($makefile, $force_complete = false, $working_copy = fals
     timeout => $build_timeout,
     notify  => Exec["provision-save-${name}"],
   }
+  */
 
   exec {"provision-save-${name}":
     command => "drush --root=${aegir_root}/platforms/${name} --context_type='platform' --makefile='${makefile}' provision-save @platform_${name}",
     creates => "${aegir_root}/.drush/platform_${name}.alias.drushrc.php",
-    require => Exec["drush make ${name}"],
-    refreshonly => true,
+    require => $aegir_installed,
     notify  => Exec["hosting-import-${name}"],
   }
 
   exec {"hosting-import-${name}":
     command => "drush @hostmaster hosting-import @platform_${name}",
-    require => [ Exec["drush make ${name}"],
-                 Exec["provision-save-${name}"],
-               ],
     refreshonly => true,
+    require => Exec["provision-save-${name}"],
   }
                           
 }
