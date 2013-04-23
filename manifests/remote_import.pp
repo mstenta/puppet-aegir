@@ -45,7 +45,7 @@ class aegir::remote_import inherits aegir::defaults {
   drush::en { 'hosting_remote_import':
     site_path  => "${aegir_root}/hostmaster-${aegir_version}/sites/${aegir_hostmaster_url}",
     log        => "${aegir_root}/drush.log",
-    require    => Exec['hosting_remote_import'], #Drush::Dl['hosting_remote_import'],
+    require    => Exec['clone hosting_remote_import'], #Drush::Dl['hosting_remote_import'],
   }
 
   # TODO: ssh key share for aegir user
