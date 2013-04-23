@@ -34,9 +34,7 @@ class aegir::remote_import inherits aegir::defaults {
     command => "git clone --branch 6.x-1.x http://git.drupal.org/project/hosting_remote_import.git",
     cwd     => "${aegir_root}/hostmaster-${aegir_version}/sites/${aegir_hostmaster_url}/modules",
     creates => "${aegir_root}/hostmaster-${aegir_version}/sites/${aegir_hostmaster_url}/modules/hosting_remote_import",
-    require => [ $aegir_installed,
-                 Exec['remote_import'],
-               ],
+    require => $aegir_installed,
     notify     => Drush::En['hosting_remote_import'],
   }
 
