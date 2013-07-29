@@ -41,11 +41,5 @@ class aegir::defaults {
     drush_home => $aegir_root,
     log        => "${aegir_root}/drush.log"
   }
-  Drush::Git {
-    site_alias => '@hostmaster',
-    drush_user => $aegir_user,
-    drush_home => $aegir_root,
-    log        => "${aegir_root}/drush.log"
-  }
 
 }

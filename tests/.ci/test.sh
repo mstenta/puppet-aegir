@@ -25,8 +25,11 @@ fi
 rm -rf /tmp/$MODULE
 cp $MODULE_DIR /tmp/$MODULE -r
 cd /tmp/
-aptitude install -y git
-git clone --branch new http://git.drupal.org/project/puppet-drush.git drush
+echo "Installing git..."
+aptitude install -y git >> /dev/nul 2>&1
+echo "Cloning dependencies (puppet-drush)..."
+git clone --branch new http://git.drupal.org/project/puppet-drush.git drush  >> /dev/null 2>&1
+echo "Setting up terminal colors..."
 wget http://ansi-color.googlecode.com/svn/tags/0.6/ansi-color/color >> /dev/null 2>&1
 mv ./color /usr/local/bin
 chmod a+x /usr/local/bin/color
