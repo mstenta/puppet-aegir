@@ -1,23 +1,51 @@
 class aegir::defaults {
 
-  if ! $aegir_root { $aegir_root = '/var/aegir' }
+  $aegir_root   = '/var/aegir'
+  $aegir_user   = 'aegir'
+  $frontend_url = false
+  $db_host      = false
+  $db_user      = false
+  $db_password  = false
+  $admin_email  = false
+  $admin_name   = false
+  $makefile     = false
+  $api          = ''
+  $apt          = true
+  $dist         = 'stable'
+  $ensure       = 'present'
+  $db_server    = 'mysql'
+  $web_server   = 'apache2'
 
-  if ! $aegir_user { $aegir_user = 'aegir' }
+  if defined(Class['aegir::dev']) {
+    $aegir_installed = Class['aegir::dev']
+  }
+  else {
+    $aegir_installed = Class['aegir']
+  }
 
-  if ($aegir_dev_build and ! $aegir_version)   { $aegir_version = '6.x-1.x' }
-  elsif ! $aegir_version { $aegir_version = '6.x-1.9' }
-
-  if ! $aegir_hostmaster_url { $aegir_hostmaster_url = $fqdn }
-
-  if ! $aegir_dev_build { $aegir_installed = Class['aegir::frontend'] }
-  else { $aegir_installed = Class['aegir::manual_build::frontend'] }
-
-  Exec { path        => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ],
-         user        => $aegir_user,
-         group       => $aegir_user,
-         environment => "HOME=${aegir_root}",
-# Bug in Puppet 2.6? http://projects.puppetlabs.com/issues/4416
-#         provider    => 'shell',
+  Drush::Run {
+    site_alias => '@hostmaster',
+    drush_user => $aegir_user,
+    drush_home => $aegir_root,
+    log        => "${aegir_root}/drush.log"
+  }
+  Drush::Dl {
+    site_alias => '@hostmaster',
+    drush_user => $aegir_user,
+    drush_home => $aegir_root,
+    log        => "${aegir_root}/drush.log"
+  }
+  Drush::En {
+    site_alias => '@hostmaster',
+    drush_user => $aegir_user,
+    drush_home => $aegir_root,
+    log        => "${aegir_root}/drush.log"
+  }
+  Drush::Git {
+    site_alias => '@hostmaster',
+    drush_user => $aegir_user,
+    drush_home => $aegir_root,
+    log        => "${aegir_root}/drush.log"
   }
 
 }
