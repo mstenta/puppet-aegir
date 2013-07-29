@@ -23,7 +23,7 @@ class aegir::backend (
         ensure => absent;
       }
     }
-    1: {
+    1, '': {
       $real_api = ''
     }
     default: {
