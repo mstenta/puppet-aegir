@@ -9,10 +9,8 @@ class aegir::backend (
 
   if $apt {
     class { 'aegir::apt' :
-      dist => $dist,
-    }
-    Package["aegir-provision${real_api}"] {
-      require => Class['aegir::apt'],
+      dist   => $dist,
+      before => Package["aegir-provision${real_api}"]
     }
   }
 
