@@ -75,7 +75,7 @@ class aegir::dev (
     exec { 'aegir_update_apt':
       command     => '/usr/bin/apt-get update',
       refreshonly => true,
-      subscribe   => Exec['Install provision'],
+      subscribe   => Drush::Git['Install provision'],
     }
 
   }
@@ -98,6 +98,7 @@ class aegir::dev (
         command     => 'a2enmod rewrite',
         unless      => 'apache2ctl -M | grep rewrite',
         refreshonly => true,
+        path        => [ '/bin/', '/sbin/' , '/usr/bin/', '/usr/sbin/' ],
         require     => Package[$web_server],
         before      => Drush::Run['hostmaster-install'],
       }
@@ -133,7 +134,7 @@ class aegir::dev (
       'mysql': {
         package {'mysql-server':
           ensure  => present,
-          require => Exec['update_apt'],
+          require => Exec['aegir_update_apt'],
           before  => Drush::Run['hostmaster-install'],
         }
       }

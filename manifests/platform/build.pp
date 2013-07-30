@@ -19,19 +19,19 @@ define aegir::platform::build (
     makefile => $makefile,
     options  => "${force_opt} ${working_opt}",
     require  => $aegir::defaults::aegir_installed,
-    notify   => Exec["provision-save-${name}"],
+    notify   => Drush::Run["provision-save:${name}"],
   }
 
-  drush::run {"provision-save-${name}":
+  drush::run {"provision-save:${name}":
     command   => 'provision-save',
     arguments => "@platform_${name}",
     options   => "--root=${aegir::defaults::aegir_root}/platforms/${name} --context_type='platform' --makefile='${makefile}'",
     creates   => "${aegir::defaults::aegir_root}/.drush/platform_${name}.alias.drushrc.php",
     require   => $aegir::defaults::aegir_installed,
-    notify    => Drush::Run["hosting-import-${name}"],
+    notify    => Drush::Run["hosting-import:${name}"],
   }
 
-  drush::run {"hosting-import-${name}":
+  drush::run {"hosting-import:${name}":
     command     => 'hosting-import',
     arguments   => "@platform_${name}",
     refreshonly => true,
