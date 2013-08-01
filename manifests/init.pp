@@ -20,6 +20,14 @@ class aegir (
       package { 'aegir':
         ensure => absent;
       }
+      # Ensure we allow Drush to upgrade.
+      file { [
+        "/etc/apt/preferences.d/drush.pref",
+        "/etc/apt/preferences.d/drush-squeeze.pref",
+        ] :
+        ensure => absent,
+        notify  => Exec['drush_update_apt'],
+      }
       include drush
     }
     1, '': {
