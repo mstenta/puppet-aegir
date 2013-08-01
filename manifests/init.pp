@@ -42,20 +42,21 @@ class aegir (
 
   case $db_server {
     'mariadb': { /* To do */ }
-    default: { /* mysql will be installed as a dependency of the aegir packages. */ }
+    'mysql', default: { /* mysql will be installed as a dependency of the aegir packages. */ }
   }
 
   case $web_server {
     'nginx': { /* To do */ }
-    default: { /* apache2 will be installed as a dependency of the aegir packages. */ }
+    'apache2', default: { /* apache2 will be installed as a dependency of the aegir packages. */ }
   }
 
-  if $frontend_url { exec {"echo debconf aegir/site string ${frontend_url} | debconf-set-selections":       before => Package['aegir'], } }
-  if $db_host      { exec {"echo debconf aegir/db_host string ${db_host} | debconf-set-selections":         before => Package['aegir'], } }
-  if $db_user      { exec {"echo debconf aegir/db_user string ${db_user} | debconf-set-selections":         before => Package['aegir'], } }
-  if $db_password  { exec {"echo debconf aegir/db_password string ${db_password} | debconf-set-selections": before => Package['aegir'], } }
-  if $admin_email  { exec {"echo debconf aegir/email string ${admin_email} | debconf-set-selections":       before => Package['aegir'], } }
-  if $makefile     { exec {"echo debconf aegir/makefile string ${makefile} | debconf-set-selections":       before => Package['aegir'], } }
+  Aegir::Apt::Debconf { before => Package['aegir'] }
+  if $frontend_url { aegir::apt::debconf { "aegir/site string ${frontend_url}": } }
+  if $db_host      { aegir::apt::debconf { "aegir/db_host string ${db_host}": } }
+  if $db_user      { aegir::apt::debconf { "aegir/db_user string ${db_user}": } }
+  if $db_password  { aegir::apt::debconf { "aegir/db_password string ${db_password}": } }
+  if $admin_email  { aegir::apt::debconf { "aegir/email string ${admin_email}": } }
+  if $makefile     { aegir::apt::debconf { "aegir/makefile string ${makefile}": } }
 
   package { "aegir${real_api}":
     ensure       => $ensure,
