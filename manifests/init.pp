@@ -60,7 +60,7 @@ class aegir (
 
   package { "aegir${real_api}":
     ensure       => $ensure,
-    responsefile => 'files/aegir.preseed',
+    responsefile => template('aegir/aegir.preseed.erb'),
     require      => Class['aegir::apt'],
   }
 
