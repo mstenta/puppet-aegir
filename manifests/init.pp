@@ -27,7 +27,7 @@ class aegir (
         "/etc/apt/preferences.d/drush-squeeze.pref",
         ] :
         ensure => absent,
-        notify  => Exec['drush_update_apt'],
+        notify  => Exec['aegir_update_apt'],
       }
       # Only install Drush if it hasn't already been.
       if !defined(Class['drush']) and !defined(Class['drush::git::drush']) {
