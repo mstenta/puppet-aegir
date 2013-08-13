@@ -126,13 +126,10 @@ INSTRUCTIONS
 To use this module, follow these directions:
 
 1. Your modules directory will need all the files included in this
-   repository placed under a directory called "aegir"
+   repository placed under a directory called "aegir".
 
-2. Since Debian package installations depends on the Apt module, which in turn
-   depends on some functions provided by the Common module, you'll need to add
-   the following line in your manifests (ideally to manifests/modules.pp):
-
-       import "common"
+2. Likewise, you'll need the puppet-drush module installed under a directory
+   called "drush".
 
 3. To install Aegir, add the following line to your manifests (ideally in 
    manifests/site.pp):
