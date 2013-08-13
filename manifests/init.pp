@@ -20,7 +20,8 @@ class aegir (
       package { 'aegir':
         ensure => absent;
       }
-      # Ensure we allow Drush to upgrade.
+      # Ensure we allow Drush to upgrade. This is essentially here to remove
+      # files (since deprecated) from the old puppet-drush module.
       file { [
         "/etc/apt/preferences.d/drush.pref",
         "/etc/apt/preferences.d/drush-squeeze.pref",
@@ -28,7 +29,10 @@ class aegir (
         ensure => absent,
         notify  => Exec['drush_update_apt'],
       }
-      include drush
+      # Only install Drush if it hasn't already been.
+      if !defined(Class['drush']) and !defined(Class['drush::git::drush']) {
+        include drush
+      }
     }
     1, '': {
       $real_api = ''
