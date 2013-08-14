@@ -13,6 +13,7 @@ class aegir::defaults {
   $dist         = 'stable'
   $ensure       = 'present'
   $db_server    = 'mysql'
+  $secure_mysql = false
   $web_server   = 'apache2'
 
   if defined(Class['aegir::dev']) {
