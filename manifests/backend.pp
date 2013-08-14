@@ -1,13 +1,12 @@
 class aegir::backend (
   $api      = $aegir::defaults::api,
-  $apt      = $aegir::defaults::apt,
   $dist     = $aegir::defaults::dist,
   $ensure   = $aegir::defaults::ensure
   ) inherits aegir::defaults {
 
   class { 'drush': }
 
-  if $apt {
+  if $dist {
     class { 'aegir::apt' :
       dist   => $dist,
       before => Package["aegir-provision${real_api}"]

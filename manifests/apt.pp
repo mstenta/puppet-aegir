@@ -2,6 +2,12 @@ class aegir::apt ( $dist = 'stable' ) {
 
   $apt_keys_dir = '/root/apt_keys'
 
+  if !defined(Package['debconf-utils']) {
+    package { 'debconf-utils':
+      ensure => present,
+    }
+  }
+
   file { 'aegir_apt_keys_dir':
     ensure => 'directory',
     path   => $apt_keys_dir,

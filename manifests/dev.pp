@@ -6,7 +6,6 @@ class aegir::dev (
   $admin_email  = $aegir::defaults::admin_email,
   $admin_name   = $aegir::defaults::admin_name,
   $makefile     = $aegir::defaults::makefile,
-  $apt          = $aegir::defaults::apt,
   $aegir_user   = $aegir::defaults::aegir_user,
   $aegir_root   = $aegir::defaults::aegir_root,
   $web_group    = $aegir::defaults::web_group,
@@ -55,35 +54,27 @@ class aegir::dev (
   }
 
   # Ref.: http://community.aegirproject.org/installing/manual#Install_system_requirements
-  if $apt {
+  package { ['php5', 'php5-cli', 'php5-gd', 'php5-mysql', 'postfix', 'sudo', 'rsync', 'git', 'unzip']:
+    ensure  => present,
+    before  => Drush::Run['hostmaster-install'],
+  }
 
-    package { ['php5', 'php5-cli', 'php5-gd', 'php5-mysql', 'postfix', 'sudo', 'rsync',/* 'git-core',*/ 'unzip']:
-      ensure  => present,
-      require => Exec['aegir_update_apt'],
-      before  => Drush::Run['hostmaster-install'],
-    }
-
-    package { $web_server :
-      ensure  => present,
-      require => Exec['aegir_update_apt'],
-      before  => [
-        User[$aegir_user],
-        Drush::Run['hostmaster-install'],
-      ],
-    }
-
-    exec { 'aegir_update_apt':
-      command     => '/usr/bin/apt-get update',
-      refreshonly => true,
-      subscribe   => Drush::Git['Install provision'],
-    }
-
+  package { $web_server :
+    ensure  => present,
+    before  => [
+      User[$aegir_user],
+      Drush::Run['hostmaster-install'],
+    ],
   }
 
   case $web_server {
     # Ref.: http://community.aegirproject.org/installing/manual#Nginx_configuration
     'nginx': {
-      $http_service_type = 'apache'
+      $http_service_type = 'nginx'
+      package { 'php5-fpm':
+        ensure => present,
+        before => File['/etc/nginx/conf.d/aegir.conf'],
+      }
       file { '/etc/nginx/conf.d/aegir.conf' :
         ensure  => link,
         target  => "${aegir_root}/config/nginx.conf",
@@ -129,20 +120,17 @@ class aegir::dev (
   # Note: skipping http://community.aegirproject.org/installing/manual#DNS_configuration
 
   # Ref.: http://community.aegirproject.org/installing/manual#Database_configuration
-  if $apt {
-    case $db_server {
-      'mysql': {
-        package {'mysql-server':
-          ensure  => present,
-          require => Exec['aegir_update_apt'],
-          before  => Drush::Run['hostmaster-install'],
-        }
+  case $db_server {
+    'mysql': {
+      package {'mysql-server':
+        ensure  => present,
+        before  => Drush::Run['hostmaster-install'],
       }
-      #'mariadb': { /* To do */ }
-      #'postgresql': { /* To do */ }
-      default: {
-        err("'${db_server}' is not a supported web server. Supported web servers include 'mysql'.")
-      }
+    }
+    #'mariadb': { /* To do */ }
+    #'postgresql': { /* To do */ }
+    default: {
+      err("'${db_server}' is not a supported database server. Supported database servers include 'mysql'.")
     }
   }
 

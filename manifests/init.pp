@@ -6,7 +6,6 @@ class aegir (
   $admin_email  = $aegir::defaults::admin_email,
   $makefile     = $aegir::defaults::makefile,
   $api          = $aegir::defaults::api,
-  $apt          = $aegir::defaults::apt,
   $dist         = $aegir::defaults::dist,
   $db_server    = $aegir::defaults::db_server,
   $web_server   = $aegir::defaults::web_server,
@@ -46,7 +45,7 @@ class aegir (
     }
   }
 
-  if $apt {
+  if $dist {
     class { 'aegir::apt' :
       dist => $dist,
     }

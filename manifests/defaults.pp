@@ -10,7 +10,6 @@ class aegir::defaults {
   $admin_name   = false
   $makefile     = false
   $api          = ''
-  $apt          = true
   $dist         = 'stable'
   $ensure       = 'present'
   $db_server    = 'mysql'
