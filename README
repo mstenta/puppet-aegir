@@ -23,9 +23,9 @@ REQUIREMENTS
 
 The Aegir Puppet module is designed to work on Debian GNU/Linux systems and
 derivatives. It provides rudimentary support for apt-get, which can be
-disabled by setting the 'apt' parameter to 'false' on the 'aegir' class. As 
-such, it should work with other *nix systems, assuming Aegir is available for 
-install in the OS's packaging system, or Aegir is installed from source using 
+disabled by setting the 'dist' parameter to false on the 'aegir' class. As
+such, it should work with other *nix systems, assuming Aegir is available for
+install in the OS's packaging system, or Aegir is installed from source using
 the provided 'aegir::dev' class.
 
 INSTALLATION
@@ -33,12 +33,13 @@ INSTALLATION
 
 To use this module, follow these directions:
 
-1. Your modules directory will need all the files included in this
-   repository placed under a directory called "aegir".
+1. Your modules directory will need all the files included in this repository
+   placed under a directory called "aegir". Likewise, you'll need the puppet-
+   drush module installed under a directory called "drush".
 
-2. To install Drush, add one of these entries to your manifests (such as in
-   manifests/nodes.pp):
-   
+2. To install Aegir from the official releases, add one of these entries to
+   your manifests:
+
        include aegir
 
    or
@@ -63,13 +64,12 @@ To use this module, follow these directions:
     web_server: The web server type to install. Currently supports 'apache2'
         and 'nginx'. Defaults to 'apache2'.
     api: The major version of Aegir to install. Currently supports '1' or '2'.
-    apt: Whether to install via apt-get. Defaults to 'true'.
     dist: The Debian distribution from which to install via apt-get. Defaults
         to 'stable'.
     ensure: What state the package should be in. Valid values are 'present'
-        (also called 'installed'), 'absent', 'purged', 'held', of 'latest'. 
+        (also called 'installed'), 'absent', 'purged', 'held', of 'latest'.
         Values can match /./.
- 
+
 2a. To install Aegir from source, add one of these entries to your manifests:
 
        include aegir::dev
@@ -94,7 +94,7 @@ To use this module, follow these directions:
     admin_email: The email address of the administrator user/client.
     admin_name: The username and client name of the administrator user/client.
     makefile: The makefile to use in building the hostmaster platform.
-    db_server: The database server type to install. Currently only support 
+    db_server: The database server type to install. Currently only support
         'mysql'.
     web_server: The web server type to install. Currently supports 'apache2'
         and 'nginx'. Defaults to 'apache2'.
@@ -106,7 +106,7 @@ To use this module, follow these directions:
     web_group: The name of the web server's system user's group. Defaults to
         'www-data'.
     update: Whether to update to the latest code with each Puppet run.
-        Defaults to false. 
+        Defaults to false.
     drush_make_version: (deprecated) Only for use with Aegir 1.x, in which
         case, it should be set to 2.3. Defaults to false.
     hostmaster_repo: The git repo from which to clone the hostmaster profile.
@@ -119,103 +119,26 @@ To use this module, follow these directions:
         extension. Defaults to '7.x-3.x'.
 
 
-
 INSTRUCTIONS
 ------------
 
 To use this module, follow these directions:
 
-1. Your modules directory will need all the files included in this
-   repository placed under a directory called "aegir".
+1. Install as per the instructions above.
 
-2. Likewise, you'll need the puppet-drush module installed under a directory
-   called "drush".
+2. To install Hosting Queue Runner, add the following line to your manifests:
 
-3. To install Aegir, add the following line to your manifests (ideally in 
-   manifests/site.pp):
-   
-       include aegir
-
-4. To install Hosting Queue Runner, add the following line to your manifests
-   (ideally in manifests/site.pp):
-   
        include aegir::queue_runner
 
-5. To build platforms and import them into the Aegir front-end, add the lines
-    such as the following to your manifests (ideally in manifests/site.pp):
- 
+   Note that the queue daemon is installed automatically by the aegir2 .deb. So
+   the aegir::queue_runner class is un-necessary when using 'api = 2'.
+
+3. To build platforms and import them into the Aegir front-end, add the lines
+    such as the following to your manifests:
+
        aegir::platform {'Open_Atrium':
          makefile => 'http://drupalcode.org/project/openatria_makefiles.git/blob_plain/refs/heads/master:/stub-openatrium.make',
        }
-
-
-Options, variables and parameters
----------------------------------
-
-A number of options are available for the package-based installation of Aegir.
-You can:
-
-  * Specify the front-end URL:
-      $aegir_hostmaster_url = 'aegir.koumbit.org'
-
-  * Use a remote database server:
-      $aegir_db_host = 'mysql2.koumbit.net'
-      $aegir_db_user = 'root'
-      $aegir_db_password = 'Pa55w0rd'
-
-  * Set the email of the admin user in the Aegir front-end:
-      $aegir_email = 'admin@koumbit.org'
-
-  * Specify and alternate makefile to build the front-end with:
-      $aegir_makefile = 'alternate-aegir.make'
-
-Aegir can also be installed following the 'manual' instructions
-(http://community.aegirproject.org/installing/manual) instead of from packages
-by using the following class instead of the default 'aegir' class:
-
-    include aegir::manual_build
-
-In addition to the options listed above for package-based installations, you
-can:
-
-  * Set an alternate name for the 'aegir' user:
-      $aegir_user = 'aegir'
-  * Move the Aegir root directory:
-      $aegir_root = '/var/aegir'
-  * Install a version other than the current one:
-      $aegir_version = '6.x-1.6'
-  * Specify a different version of Drush Make to install and use:
-      $aegir_drush_make_version = '6.x-2.3'
-  * Use a different webserver:
-      $aegir_http_service_type = 'apache' 
-      $aegir_web_group = 'www-data'
-
-WARNING! Only change any of the above if you *really* know what you are doing,
-and even then, think twice. Changing these can result in a broken and/or
-unusable Aegir installation.
-
-If you want to develop on Aegir, or try out the latest features, you can build
-'manually' from the latest git repos (N.B. setting this variable forces a
-manual build, and so makes '$aegir_manual_build = true' redundant):
-
-    $aegir_dev_build = true
-
-By default, a one-time login link will be posted following initial
-installation. You can force posting such a link every time the manifest is run
-by setting this variable:
-
-    $aegir_force_login_link = true
-
-Finally, aegir::platform allows for two optional parameters, in addition to the
-required makefile. The first will force completion of platform builds, ignoring
-errors:
-
-    force_complete => true
-
-The second will preserve VCS meta-data for projects built from developer repos,
-rather than tarball packages:
-
-    working_copy => true
 
 
 --------------------------------------------------------------------------------
