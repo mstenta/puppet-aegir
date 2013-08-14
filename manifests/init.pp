@@ -57,7 +57,17 @@ class aegir (
   }
 
   case $web_server {
-    'nginx': { /* To do */ }
+    'nginx': {
+      package { ['nginx', 'php5-fpm']:
+        ensure  => present,
+        require => Exec["aegir_update_apt"],
+      }
+      service { 'nginx' :
+        ensure => running,
+        require => Package['nginx'],
+        before  => Package["aegir${real_api}"],
+      }
+    }
     'apache2', default: { /* apache2 will be installed as a dependency of the aegir packages. */ }
   }
 
@@ -68,6 +78,7 @@ class aegir (
   if $db_password  { aegir::apt::debconf { "aegir/db_password string ${db_password}": } }
   if $admin_email  { aegir::apt::debconf { "aegir/email string ${admin_email}": } }
   if $makefile     { aegir::apt::debconf { "aegir/makefile string ${makefile}": } }
+  if $web_server   { aegir::apt::debconf { "aegir/webserver string ${web_server}": } }
 
   package { "aegir${real_api}":
     ensure       => $ensure,
