@@ -15,6 +15,7 @@ class aegir::defaults {
   $db_server    = 'mysql'
   $secure_mysql = false
   $web_server   = 'apache2'
+  $web_group    = 'www-data'
 
   if defined(Class['aegir::dev']) {
     $aegir_installed = Class['aegir::dev']
