@@ -164,8 +164,7 @@ class aegir::dev (
   # Ref.: http://community.aegirproject.org/installing/manual#Running_hostmaster-install
 
   # Build our options
-  #$default_options = " --debug --working-copy --strict=0 --no-gitinfofile --aegir_version=${hostmaster_ref}"
-  $default_options = " --debug --strict=0 --no-gitinfofile --aegir_version=${hostmaster_ref}"
+  $default_options = " --debug --working-copy --strict=0 --no-gitinfofile --aegir_version=${hostmaster_ref}"
   if $aegir_user {        $a = " --script_user=${aegir_user}" }
   if $aegir_root {        $b = " --aegir_root=${aegir_root}" }
   if $web_group {         $c = " --web_group=${web_group}" }
