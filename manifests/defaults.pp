@@ -38,7 +38,7 @@ class aegir::defaults {
   }
   Drush::En {
     site_alias => '@hostmaster',
-    drush_user => $aegir_user,
+    #drush_user => $aegir_user, # causes a cyclical dependency
     drush_home => $aegir_root,
     log        => "${aegir_root}/drush.log"
   }

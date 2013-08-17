@@ -49,6 +49,7 @@ class aegir::dev (
     git_repo   => $provision_repo,
     git_branch => $provision_ref,
     dir_name   => 'provision',
+    user       => 'aegir',
     path       => "${aegir_root}/.drush/",
     before     => Drush::Run['hostmaster-install'],
     require    => File[ $aegir_root, "${aegir_root}/.drush"],
@@ -190,6 +191,23 @@ class aegir::dev (
     drush_home => $aegir_root,
     require    => User[$aegir_user],
     timeout    => 0,
+  }
+
+  file { 'queue daemon init script':
+    source  => 'puppet:///modules/aegir/init.d.example-new',
+    path    => '/etc/init.d/hosting-queued',
+    owner   => 'root',
+    mode    => 0755,
+    require => Drush::Run['hostmaster-install'],
+  }
+  drush::en { 'hosting_queued':
+    refreshonly => true,
+    subscribe   => File['queue daemon init script'],
+    before      => Service['hosting-queued'],
+  }
+  service { 'hosting-queued':
+    ensure  => running,
+    subscribe => File['queue daemon init script'],
   }
 
   exec {'aegir-dev login':

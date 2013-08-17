@@ -33,6 +33,17 @@ class aegir (
       if !defined(Class['drush']) and !defined(Class['drush::git::drush']) {
         include drush
       }
+      # While the .deb intalls the init script for hosting_queued, it doesn't
+      # enable it by default
+      drush::en { 'hosting_queued':
+        refreshonly => true,
+        subscribe   => Package["aegir${real_api}"],
+        before      => Service['hosting-queued'],
+      }
+      service { 'hosting-queued':
+        ensure  => running,
+        require => Package["aegir${real_api}"],
+      }
     }
     1, '': {
       $real_api = ''
