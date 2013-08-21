@@ -49,15 +49,23 @@ class aegir::dev (
     git_repo   => $provision_repo,
     git_branch => $provision_ref,
     dir_name   => 'provision',
-    user       => 'aegir',
     path       => "${aegir_root}/.drush/",
-    before     => Drush::Run['hostmaster-install'],
     require    => File[ $aegir_root, "${aegir_root}/.drush"],
     update     => $update,
   }
 
-  drush::run { 'cache-clear drush':
+  file {"${aegir_root}/.drush/provision":
+    ensure  => present,
+    owner   => 'aegir',
+    group   => 'aegir',
+    recurse => true,
     require => Drush::Git['Install provision'],
+    before  => Drush::Run['hostmaster-install'],
+  }
+
+  drush::run { 'cache-clear drush':
+    site_alias => '@none',
+    require    => File["${aegir_root}/.drush/provision"],
     before     => Drush::Run['hostmaster-install'],
   }
 
