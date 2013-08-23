@@ -4,10 +4,12 @@ class aegir::extras (
   ) inherits aegir::defaults {
 
   drush::dl { 'registry_rebuild':
+    type => 'extension',
     version => $registry_rebuild_version,
   }
 
   drush::dl { 'provision_tasks_extra':
+    type => 'extension',
     version => $tasks_extra_version,
   }
 
