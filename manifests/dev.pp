@@ -96,46 +96,6 @@ class aegir::dev (
       }
     }
 
-    case $web_server {
-      # Ref.: http://community.aegirproject.org/installing/manual#Nginx_configuration
-      'nginx': {
-        $http_service_type = 'nginx'
-        package { 'php5-fpm':
-          ensure => present,
-          require => Exec['aegir_dev_update_apt'],
-          before => File['/etc/nginx/conf.d/aegir.conf'],
-        }
-        file { '/etc/nginx/conf.d/aegir.conf' :
-          ensure  => link,
-          target  => "${aegir_root}/config/nginx.conf",
-          require => Package[$web_server],
-          before  => Drush::Run['hostmaster-install'],
-        }
-      }
-      # Ref.: http://community.aegirproject.org/installing/manual#Apache_configuration
-      'apache2': {
-        $http_service_type = 'apache'
-        exec { 'Enable mod-rewrite' :
-          command     => 'a2enmod rewrite',
-          unless      => 'apache2ctl -M | grep rewrite',
-          refreshonly => true,
-          path        => [ '/bin/', '/sbin/' , '/usr/bin/', '/usr/sbin/' ],
-          require     => Package[$web_server],
-          before      => Drush::Run['hostmaster-install'],
-        }
-        file { '/etc/apache2/conf.d/aegir.conf':
-          ensure  => link,
-          target  => "${aegir_root}/config/apache.conf",
-          notify  => Exec['Enable mod-rewrite'],
-          require => Package[$web_server],
-          before  => Drush::Run['hostmaster-install'],
-        }
-      }
-      default: {
-        err("'${web_server}' is not a supported web server. Supported web servers include 'apache2' or 'nginx'.")
-      }
-    }
-
     if $db_server != false {
 
       # Ref.: http://community.aegirproject.org/installing/manual#Database_configuration
@@ -160,6 +120,46 @@ class aegir::dev (
           err("'${db_server}' is not a supported database server. Supported database servers include 'mysql'.")
         }
       }
+    }
+  }
+
+  case $web_server {
+    # Ref.: http://community.aegirproject.org/installing/manual#Nginx_configuration
+    'nginx': {
+      $http_service_type = 'nginx'
+      package { 'php5-fpm':
+        ensure => present,
+        require => Exec['aegir_dev_update_apt'],
+        before => File['/etc/nginx/conf.d/aegir.conf'],
+      }
+      file { '/etc/nginx/conf.d/aegir.conf' :
+        ensure  => link,
+        target  => "${aegir_root}/config/nginx.conf",
+        require => Package[$web_server],
+        before  => Drush::Run['hostmaster-install'],
+      }
+    }
+    # Ref.: http://community.aegirproject.org/installing/manual#Apache_configuration
+    'apache2': {
+      $http_service_type = 'apache'
+      exec { 'Enable mod-rewrite' :
+        command     => 'a2enmod rewrite',
+        unless      => 'apache2ctl -M | grep rewrite',
+        refreshonly => true,
+        path        => [ '/bin/', '/sbin/' , '/usr/bin/', '/usr/sbin/' ],
+        require     => Package[$web_server],
+        before      => Drush::Run['hostmaster-install'],
+      }
+      file { '/etc/apache2/conf.d/aegir.conf':
+        ensure  => link,
+        target  => "${aegir_root}/config/apache.conf",
+        notify  => Exec['Enable mod-rewrite'],
+        require => Package[$web_server],
+        before  => Drush::Run['hostmaster-install'],
+      }
+    }
+    default: {
+      err("'${web_server}' is not a supported web server. Supported web servers include 'apache2' or 'nginx'.")
     }
   }
 
