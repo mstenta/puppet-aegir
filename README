@@ -60,9 +60,11 @@ To use this module, follow these directions:
     admin_email: The email address of the administrator user.
     makefile: The makefile to use in building the hostmaster platform.
     db_server: The database server type to install. Currently only support
-        'mysql'.
+        'mysql'. If you don't want this module to install a database server,
+        set this to: false
     web_server: The web server type to install. Currently supports 'apache2'
-        and 'nginx'. Defaults to 'apache2'.
+        and 'nginx'. Defaults to 'apache2'. If you don't want this module to
+        install a web server, set this to: false
     api: The major version of Aegir to install. Currently supports '1' or '2'.
     dist: The Debian distribution from which to install via apt-get. Defaults
         to 'stable'.
@@ -94,10 +96,12 @@ To use this module, follow these directions:
     admin_email: The email address of the administrator user/client.
     admin_name: The username and client name of the administrator user/client.
     makefile: The makefile to use in building the hostmaster platform.
-    db_server: The database server type to install. Currently only support
-        'mysql'.
-    web_server: The web server type to install. Currently supports 'apache2'
-        and 'nginx'. Defaults to 'apache2'.
+    db_server: The database server type to install and configure. Currently only
+        supports 'mysql'. If you don't want this module to install and configure
+        a database server, set this to: false
+    web_server: The web server type to install and configure. Currently supports
+        'apache2' (default) and 'nginx'. If you don't want this module to
+        install and configure a web server, set this to: false
     apt:  Whether to install dependencies via apt-get. Defaults to 'true'.
     aegir_user: The name of the system user to run Aegir under. Defaults to
         'aegir'.

@@ -79,13 +79,16 @@ class aegir::dev (
     before  => Drush::Run['hostmaster-install'],
   }
 
-  package { $web_server :
-    ensure  => present,
-    require => Exec['aegir_dev_update_apt'],
-    before  => [
-      User[$aegir_user],
-      Drush::Run['hostmaster-install'],
-    ],
+  if $web_server != false {
+
+    package { $web_server :
+      ensure  => present,
+      require => Exec['aegir_dev_update_apt'],
+      before  => [
+        User[$aegir_user],
+        Drush::Run['hostmaster-install'],
+      ],
+    }
   }
 
   case $web_server {
@@ -126,7 +129,6 @@ class aegir::dev (
     default: {
       err("'${web_server}' is not a supported web server. Supported web servers include 'apache2' or 'nginx'.")
     }
-
   }
 
   # Note: skipping http://community.aegirproject.org/installing/manual#PHP_configuration
@@ -141,26 +143,29 @@ class aegir::dev (
 
   # Note: skipping http://community.aegirproject.org/installing/manual#DNS_configuration
 
-  # Ref.: http://community.aegirproject.org/installing/manual#Database_configuration
-  case $db_server {
-    'mysql': {
-      package {'mysql-server':
-        ensure  => present,
-        require => Exec['aegir_dev_update_apt'],
-        before  => Drush::Run['hostmaster-install'],
+  if $db_server != false {
+
+    # Ref.: http://community.aegirproject.org/installing/manual#Database_configuration
+    case $db_server {
+      'mysql': {
+        package {'mysql-server':
+          ensure  => present,
+          require => Exec['aegir_dev_update_apt'],
+          before  => Drush::Run['hostmaster-install'],
+        }
+        exec { 'remove the anonymous accounts from the mysql server':
+          command     => 'echo "DROP USER \'\'@\'localhost\';" | mysql && echo "DROP USER \'\'@\'`hostname`\';" | mysql',
+          path        => ['/bin', '/usr/bin'],
+          refreshonly => true,
+          subscribe   => Package['mysql-server'],
+          before      => Drush::Run['hostmaster-install'],
+        }
       }
-      exec { 'remove the anonymous accounts from the mysql server':
-        command     => 'echo "DROP USER \'\'@\'localhost\';" | mysql && echo "DROP USER \'\'@\'`hostname`\';" | mysql',
-        path        => ['/bin', '/usr/bin'],
-        refreshonly => true,
-        subscribe   => Package['mysql-server'],
-        before      => Drush::Run['hostmaster-install'],
+      #'mariadb': { /* To do */ }
+      #'postgresql': { /* To do */ }
+      default: {
+        err("'${db_server}' is not a supported database server. Supported database servers include 'mysql'.")
       }
-    }
-    #'mariadb': { /* To do */ }
-    #'postgresql': { /* To do */ }
-    default: {
-      err("'${db_server}' is not a supported database server. Supported database servers include 'mysql'.")
     }
   }
 

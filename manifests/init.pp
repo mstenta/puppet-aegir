@@ -63,33 +63,38 @@ class aegir (
     }
   }
 
-  case $db_server {
-    'mariadb': { /* To do */ }
-    'mysql': {
-      # While mysql would be installed by default anyway, we do it here to
-      # allow us to secure it before installing Aegir.
-      package {'mysql-server': ensure => present, }
-      service {'mysql':
-        ensure  => running,
-        require => Package['mysql-server'],
+  # Install database server.
+  if $db_server != false {
+    case $db_server {
+      'mariadb': { /* To do */ }
+      'mysql': {
+        # While mysql would be installed by default anyway, we do it here to
+        # allow us to secure it before installing Aegir.
+        package {'mysql-server': ensure => present, }
+        service {'mysql':
+          ensure  => running,
+          require => Package['mysql-server'],
+        }
       }
+      default: { /* Do nothing. */ }
     }
-    default: { /* Do nothing. */ }
   }
 
-  case $web_server {
-    'nginx': {
-      package { ['nginx', 'php5-fpm']:
-        ensure  => present,
-        require => Exec["aegir_update_apt"],
+  if $web_server != false {
+    case $web_server {
+      'nginx': {
+        package { ['nginx', 'php5-fpm']:
+          ensure  => present,
+          require => Exec["aegir_update_apt"],
+        }
+        service { 'nginx' :
+          ensure => running,
+          require => Package['nginx'],
+          before  => Package["aegir${real_api}"],
+        }
       }
-      service { 'nginx' :
-        ensure => running,
-        require => Package['nginx'],
-        before  => Package["aegir${real_api}"],
-      }
+      'apache2', default: { /* apache2 will be installed as a dependency of the aegir packages. */ }
     }
-    'apache2', default: { /* apache2 will be installed as a dependency of the aegir packages. */ }
   }
 
   Aegir::Apt::Debconf { before => Package["aegir${real_api}"] }
