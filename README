@@ -121,6 +121,9 @@ To use this module, follow these directions:
         Defaults to 'http://git.drupal.org/project/provision.git'.
     provision_branch: The git branch to use when cloning the provision
         extension. Defaults to '7.x-3.x'.
+    install_dependencies: Set this to false if you don't want any dependency
+        packages to be installed. This includes the web and database server,
+        drush, php, postfix, sudo, rsync, git, and unzip.
 
 
 INSTRUCTIONS

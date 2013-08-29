@@ -17,10 +17,9 @@ class aegir::dev (
   $hostmaster_repo    = 'http://git.drupal.org/project/hostmaster.git',
   $hostmaster_ref     = '7.x-3.x',
   $provision_repo     = 'http://git.drupal.org/project/provision.git',
-  $provision_ref      = '7.x-3.x'
+  $provision_ref      = '7.x-3.x',
+  $install_dependencies = true
   ) inherits aegir::defaults {
-
-  include drush::git::drush
 
   # Ref.: http://community.aegirproject.org/installing/manual#Create_the_Aegir_user
   group {$aegir_user:
@@ -74,60 +73,91 @@ class aegir::dev (
     command     => '/usr/bin/apt-get update && sleep 1',
   }
 
-  class { 'aegir::dev::dependencies':
-    require => Exec['aegir_dev_update_apt'],
-    before  => Drush::Run['hostmaster-install'],
-  }
+  if $install_dependencies != false {
 
-  if $web_server != false {
-
-    package { $web_server :
-      ensure  => present,
+    class { 'aegir::dev::dependencies':
       require => Exec['aegir_dev_update_apt'],
-      before  => [
-        User[$aegir_user],
-        Drush::Run['hostmaster-install'],
-      ],
+      before  => Drush::Run['hostmaster-install'],
     }
-  }
 
-  case $web_server {
-    # Ref.: http://community.aegirproject.org/installing/manual#Nginx_configuration
-    'nginx': {
-      $http_service_type = 'nginx'
-      package { 'php5-fpm':
-        ensure => present,
+    include drush::git::drush
+
+    if $web_server != false {
+
+      package { $web_server :
+        ensure  => present,
         require => Exec['aegir_dev_update_apt'],
-        before => File['/etc/nginx/conf.d/aegir.conf'],
-      }
-      file { '/etc/nginx/conf.d/aegir.conf' :
-        ensure  => link,
-        target  => "${aegir_root}/config/nginx.conf",
-        require => Package[$web_server],
-        before  => Drush::Run['hostmaster-install'],
+        before  => [
+          User[$aegir_user],
+          Drush::Run['hostmaster-install'],
+        ],
       }
     }
-    # Ref.: http://community.aegirproject.org/installing/manual#Apache_configuration
-    'apache2': {
-      $http_service_type = 'apache'
-      exec { 'Enable mod-rewrite' :
-        command     => 'a2enmod rewrite',
-        unless      => 'apache2ctl -M | grep rewrite',
-        refreshonly => true,
-        path        => [ '/bin/', '/sbin/' , '/usr/bin/', '/usr/sbin/' ],
-        require     => Package[$web_server],
-        before      => Drush::Run['hostmaster-install'],
+
+    case $web_server {
+      # Ref.: http://community.aegirproject.org/installing/manual#Nginx_configuration
+      'nginx': {
+        $http_service_type = 'nginx'
+        package { 'php5-fpm':
+          ensure => present,
+          require => Exec['aegir_dev_update_apt'],
+          before => File['/etc/nginx/conf.d/aegir.conf'],
+        }
+        file { '/etc/nginx/conf.d/aegir.conf' :
+          ensure  => link,
+          target  => "${aegir_root}/config/nginx.conf",
+          require => Package[$web_server],
+          before  => Drush::Run['hostmaster-install'],
+        }
       }
-      file { '/etc/apache2/conf.d/aegir.conf':
-        ensure  => link,
-        target  => "${aegir_root}/config/apache.conf",
-        notify  => Exec['Enable mod-rewrite'],
-        require => Package[$web_server],
-        before  => Drush::Run['hostmaster-install'],
+      # Ref.: http://community.aegirproject.org/installing/manual#Apache_configuration
+      'apache2': {
+        $http_service_type = 'apache'
+        exec { 'Enable mod-rewrite' :
+          command     => 'a2enmod rewrite',
+          unless      => 'apache2ctl -M | grep rewrite',
+          refreshonly => true,
+          path        => [ '/bin/', '/sbin/' , '/usr/bin/', '/usr/sbin/' ],
+          require     => Package[$web_server],
+          before      => Drush::Run['hostmaster-install'],
+        }
+        file { '/etc/apache2/conf.d/aegir.conf':
+          ensure  => link,
+          target  => "${aegir_root}/config/apache.conf",
+          notify  => Exec['Enable mod-rewrite'],
+          require => Package[$web_server],
+          before  => Drush::Run['hostmaster-install'],
+        }
+      }
+      default: {
+        err("'${web_server}' is not a supported web server. Supported web servers include 'apache2' or 'nginx'.")
       }
     }
-    default: {
-      err("'${web_server}' is not a supported web server. Supported web servers include 'apache2' or 'nginx'.")
+
+    if $db_server != false {
+
+      # Ref.: http://community.aegirproject.org/installing/manual#Database_configuration
+      case $db_server {
+        'mysql': {
+          package {'mysql-server':
+            ensure  => present,
+            require => Exec['aegir_dev_update_apt'],
+            before  => Drush::Run['hostmaster-install'],
+          }
+          exec { 'remove the anonymous accounts from the mysql server':
+            command     => 'echo "DROP USER \'\'@\'localhost\';" | mysql && echo "DROP USER \'\'@\'`hostname`\';" | mysql',
+            path        => ['/bin', '/usr/bin'],
+            refreshonly => true,
+            subscribe   => Package['mysql-server'],
+            before      => Drush::Run['hostmaster-install'],
+          }
+        }
+        #'mariadb': { /* To do */ }
+        #'postgresql': { /* To do */ }
+        default: {
+          err("'${db_server}' is not a supported database server. Supported database servers include 'mysql'.")
+        }
+      }
     }
   }
 
@@ -142,32 +172,6 @@ class aegir::dev (
   }
 
   # Note: skipping http://community.aegirproject.org/installing/manual#DNS_configuration
-
-  if $db_server != false {
-
-    # Ref.: http://community.aegirproject.org/installing/manual#Database_configuration
-    case $db_server {
-      'mysql': {
-        package {'mysql-server':
-          ensure  => present,
-          require => Exec['aegir_dev_update_apt'],
-          before  => Drush::Run['hostmaster-install'],
-        }
-        exec { 'remove the anonymous accounts from the mysql server':
-          command     => 'echo "DROP USER \'\'@\'localhost\';" | mysql && echo "DROP USER \'\'@\'`hostname`\';" | mysql',
-          path        => ['/bin', '/usr/bin'],
-          refreshonly => true,
-          subscribe   => Package['mysql-server'],
-          before      => Drush::Run['hostmaster-install'],
-        }
-      }
-      #'mariadb': { /* To do */ }
-      #'postgresql': { /* To do */ }
-      default: {
-        err("'${db_server}' is not a supported database server. Supported database servers include 'mysql'.")
-      }
-    }
-  }
 
   # Note: Skipping the below (for now)
   # comment out 'bind-address = 127.0.0.1' from /etc/mysql/my.cnf
