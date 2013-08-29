@@ -1,6 +1,7 @@
 class aegir::dev (
   $frontend_url = $fqdn,
   $db_host      = $aegir::defaults::db_host,
+  $db_port      = $aegir::defaults::db_port,
   $db_user      = $aegir::defaults::db_user,
   $db_password  = $aegir::defaults::db_password,
   $admin_email  = $aegir::defaults::admin_email,
@@ -11,6 +12,7 @@ class aegir::dev (
   $web_group    = $aegir::defaults::web_group,
   $db_server    = $aegir::defaults::db_server,
   $web_server   = $aegir::defaults::web_server,
+  $web_port     = $aegir::defaults::web_port,
   $update       = false,
   $platform_path      = false,
   $drush_make_version = false,
@@ -185,16 +187,18 @@ class aegir::dev (
   if $aegir_root {        $b = " --aegir_root=${aegir_root}" }
   if $web_group {         $c = " --web_group=${web_group}" }
   if $db_host {           $d = " --aegir_db_host=${db_host}" }
-  if $db_user {           $e = " --aegir_db_user${db_user}" }
-  if $db_password {       $f = " --aegir_db_pass=${db_password}" }
-  if $http_service_type { $g = " --http_service_type=${http_service_type}"}
-  if $drush_make_version{ $h = " --drush_make_version=${drush_make_version}"}
-  if $admin_email {       $i = " --client_email=${admin_email}"}
-  if $admin_name {        $j = " --client_name=${admin_name}"}
-  if $makefile {          $k = " --makefile=${makefile}"}
-  if $frontend_url {      $l = " --aegir_host=${frontend_url}"}
-  if $platform_path {     $m = " --root=${platform_path}" }
-  $install_options = "$default_options${a}${b}${c}${d}${e}${f}${g}${h}${i}${j}${k}${l}${m}"
+  if $db_port {           $e = " --aegir_db_port=${db_port}" }
+  if $db_user {           $f = " --aegir_db_user${db_user}" }
+  if $db_password {       $g = " --aegir_db_pass=${db_password}" }
+  if $http_service_type { $h = " --http_service_type=${http_service_type}"}
+  if $drush_make_version{ $i = " --drush_make_version=${drush_make_version}"}
+  if $admin_email {       $j = " --client_email=${admin_email}"}
+  if $admin_name {        $k = " --client_name=${admin_name}"}
+  if $makefile {          $l = " --makefile=${makefile}"}
+  if $frontend_url {      $m = " --aegir_host=${frontend_url}"}
+  if $web_port {          $n = " --http_port=${web_port}"}
+  if $platform_path {     $o = " --root=${platform_path}" }
+  $install_options = "$default_options${a}${b}${c}${d}${e}${f}${g}${h}${i}${j}${k}${l}${m}${n}${o}"
 
   drush::run {'hostmaster-install':
     site_alias => '@none',

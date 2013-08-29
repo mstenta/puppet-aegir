@@ -89,6 +89,11 @@ To use this module, follow these directions:
     frontend_url: The URL at which to install the Aegir frontend site.
     db_host: The hostname of the database server on which to host the Aegir
         frontend site.
+    db_port: The port that the database server is running on. If you are setting
+        this parameter, you will need to install and configure your database
+        server manually before running this module, because it does not contain
+        code to automatically configure the port during database server
+        installation.
     db_user: The username for the database in which to install the Aegir
         frontend site.
     db_password: The password for the database in which to install the Aegir
@@ -102,6 +107,10 @@ To use this module, follow these directions:
     web_server: The web server type to install and configure. Currently supports
         'apache2' (default) and 'nginx'. If you don't want this module to
         install and configure a web server, set this to: false
+    web_port: The port that the web server is running on. If you are setting
+        this parameter, you will need to install and configure your web server
+        manually before running this module, because it does not contain code
+        to automatically configure the port during web server installation.
     apt:  Whether to install dependencies via apt-get. Defaults to 'true'.
     aegir_user: The name of the system user to run Aegir under. Defaults to
         'aegir'.

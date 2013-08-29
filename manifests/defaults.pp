@@ -4,6 +4,7 @@ class aegir::defaults {
   $aegir_user   = 'aegir'
   $frontend_url = false
   $db_host      = false
+  $db_port      = '3306'
   $db_user      = false
   $db_password  = false
   $admin_email  = false
@@ -15,6 +16,7 @@ class aegir::defaults {
   $db_server    = 'mysql'
   $secure_mysql = false
   $web_server   = 'apache2'
+  $web_port     = '80'
   $web_group    = 'www-data'
 
   if defined(Class['aegir::dev']) {
