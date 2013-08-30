@@ -74,8 +74,7 @@ class aegir::dev (
     command     => '/usr/bin/apt-get update && sleep 1',
   }
 
-  package { ['php5', 'php5-cli', 'php5-gd', 'php5-mysql', 'postfix', 'sudo', 'rsync', 'git', 'unzip']:
-    ensure  => present,
+  class { 'aegir::dev::dependencies':
     require => Exec['aegir_dev_update_apt'],
     before  => Drush::Run['hostmaster-install'],
   }
