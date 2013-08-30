@@ -8,8 +8,11 @@ class aegir::extras inherits aegir::defaults {
     type => 'extension',
   }
 
-  drush::dl { 'hosting_tasks_extra': }
+  drush::dl { 'hosting_tasks_extra':
+    require => [ Drush::Dl['registry_rebuild'], Drush::Dl['provision_tasks_extra'] ],
+  }
 
-  drush::en { 'hosting_tasks_extra': }
-
+  drush::en { 'hosting_tasks_extra':
+    require => Drush::Dl['hosting_tasks_extra'],
+  }
 }
