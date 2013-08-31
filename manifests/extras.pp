@@ -1,5 +1,7 @@
 class aegir::extras inherits aegir::defaults {
 
+  Drush::Dl { require => $aegir::defaults::aegir_installed }
+
   drush::dl { 'registry_rebuild':
     options => '--default-major=7',
     type => 'extension',
