@@ -35,7 +35,7 @@ mv ./color /usr/local/bin
 chmod a+x /usr/local/bin/color
 
 echo "Scanning for tests in '$MODULE' module..."
-FILES=`find /tmp/$MODULE/tests -name *.pp`
+FILES=`find /tmp/$MODULE/tests -name functional_tests -prune -o -name *.pp -print`
 COUNT=${#FILES[@]}
 PASSED=0
 FAILED=0
