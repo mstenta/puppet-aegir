@@ -1,7 +1,7 @@
 node "aegir2" {
 
   class { 'drush::git::drush' :
-    //$git_branch = '5.x',
+    #$git_branch = '5.x',
     $git_tag    = '5.10',
   }
 
