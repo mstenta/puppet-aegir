@@ -56,12 +56,13 @@ class aegir::dev (
   }
 
   file {"${aegir_root}/.drush/provision":
-    ensure  => present,
-    owner   => 'aegir',
-    group   => 'aegir',
-    recurse => true,
-    require => Drush::Git['Install provision'],
-    before  => Drush::Run['hostmaster-install'],
+    ensure   => present,
+    owner    => 'aegir',
+    group    => 'aegir',
+    loglevel => 'debug',
+    recurse  => true,
+    require  => Drush::Git['Install provision'],
+    before   => Drush::Run['hostmaster-install'],
   }
 
   drush::run { 'cache-clear drush':
