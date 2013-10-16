@@ -25,3 +25,8 @@ if [ ! -h $SCRIPT_DIR/../../../Vagrantfile ]
 then
   ln -s $SCRIPT_DIR/Vagrantfile $SCRIPT_DIR/../../../Vagrantfile
 fi
+
+if [ -e $SCRIPT_DIR/.vagrant ]
+then
+  cd $SCRIPT_DIR && vagrant destroy --force
+fi
