@@ -1,5 +1,6 @@
 #!/bin/bash
 
+CWD=`pwd`
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 if [ ! -d $SCRIPT_DIR/modules ]
@@ -28,5 +29,5 @@ fi
 
 if [ -e $SCRIPT_DIR/.vagrant ]
 then
-  cd $SCRIPT_DIR && vagrant destroy --force
+  cd $CWD && vagrant destroy --force
 fi
