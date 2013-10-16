@@ -2,7 +2,7 @@ node "aegir2-dev.test" {
 
   class { 'drush::git::drush' :
     #$git_branch => '5.x',
-    git_tag    => '5.10',
+    git_tag    => '5.10.0',
   }
 
   class { 'aegir::dev' :
