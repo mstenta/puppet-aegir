@@ -8,7 +8,7 @@ node "aegir2-dev.test" {
   class { 'aegir::dev' :
     hostmaster_ref => '6.x-2.x',
     provision_ref  => '6.x-2.x',
-    require => Class['drush'],
+    require => Class['drush::git::drush'],
   }
 
 }
