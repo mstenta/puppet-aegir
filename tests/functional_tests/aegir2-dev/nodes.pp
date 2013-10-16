@@ -1,4 +1,4 @@
-node "aegir2" {
+node "aegir2-dev.test" {
 
   class { 'drush::git::drush' :
     #$git_branch => '5.x',
