@@ -1,4 +1,4 @@
-vagrant up
+vagrant up --provision
 if [ "$?" -ne "0" ]
 then
   echo "'vagrant up' failed. Leaving vm in place for forensic analysis."
