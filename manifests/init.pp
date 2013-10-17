@@ -107,9 +107,10 @@ class aegir (
   if $web_server   { aegir::apt::debconf { "aegir/webserver string ${web_server}": } }
 
   if $secure_mysql {
-    exec { 'remove the anonymous accounts from the mysql server':
-      command     => 'echo "DROP USER \'\'@\'localhost\';" | mysql && echo "DROP USER \'\'@\'`hostname`\';" | mysql',
-      refreshonly => true,
+    # Equivalent to /usr/bin/mysql_secure_installation without providing or setting a password
+    # From: http://matthewturland.com/2012/02/13/setting-up-ec2-for-drupal-with-puppet/
+    exec { 'mysql_secure_installation':
+        command => '/usr/bin/mysql -uroot -e "DELETE FROM mysql.user WHERE User=\'\'; DELETE FROM mysql.user WHERE User=\'root\' AND Host NOT IN (\'localhost\', \'127.0.0.1\', \'::1\'); DROP DATABASE IF EXISTS test; FLUSH PRIVILEGES;" mysql',
       subscribe   => Package['mysql-server'],
       before      => Package["aegir${real_api}"],
     }
