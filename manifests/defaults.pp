@@ -14,7 +14,7 @@ class aegir::defaults {
   $dist         = 'stable'
   $ensure       = 'present'
   $db_server    = 'mysql'
-  $secure_mysql = false
+  $secure_mysql = true
   $web_server   = 'apache2'
   $web_port     = '80'
   $web_group    = 'www-data'
