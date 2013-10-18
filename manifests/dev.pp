@@ -107,10 +107,10 @@ class aegir::dev (
             require => Exec['aegir_dev_update_apt'],
             before  => Drush::Run['hostmaster-install'],
           }
-          exec { 'remove the anonymous accounts from the mysql server':
-            command     => 'echo "DROP USER \'\'@\'localhost\';" | mysql && echo "DROP USER \'\'@\'`hostname`\';" | mysql',
-            path        => ['/bin', '/usr/bin'],
-            refreshonly => true,
+          # Equivalent to /usr/bin/mysql_secure_installation without providing or setting a password
+          # From: http://matthewturland.com/2012/02/13/setting-up-ec2-for-drupal-with-puppet/
+          exec { 'mysql_secure_installation':
+            command => '/usr/bin/mysql -uroot -e "DELETE FROM mysql.user WHERE User=\'\'; DELETE FROM mysql.user WHERE User=\'root\' AND Host NOT IN (\'localhost\', \'127.0.0.1\', \'::1\'); DROP DATABASE IF EXISTS test; FLUSH PRIVILEGES;" mysql',
             subscribe   => Package['mysql-server'],
             before      => Drush::Run['hostmaster-install'],
           }
