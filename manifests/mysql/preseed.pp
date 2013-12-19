@@ -13,8 +13,8 @@ class aegir::mysql::preseed {
   }
 
   if $aegir::real_api {
-    Exec {'preseed mysql password':
-      before  => Package["aegir${aegir::real_api}"],
+    Exec['preseed mysql password'] {
+      before => Package["aegir${aegir::real_api}"],
     }
   }
 
