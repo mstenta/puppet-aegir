@@ -70,10 +70,12 @@ class aegir (
       'mysql': {
         # While mysql would be installed by default anyway, we do it here to
         # allow us to secure it before installing Aegir.
-        package {'mysql-server': ensure => present, }
-        service {'mysql':
-          ensure  => running,
-          require => Package['mysql-server'],
+        class { 'aegirvps::mysql':
+          secure => $secure_mysql,
+          before => Package["aegir${real_api}"],
+        }
+        class { 'aegirvps::mysql::preseed':
+          require => Class['aegirvps::mysql'],
         }
       }
       default: { /* Do nothing. */ }
@@ -101,20 +103,11 @@ class aegir (
   if $frontend_url { aegir::apt::debconf { "aegir/site string ${frontend_url}": } }
   if $db_host      { aegir::apt::debconf { "aegir/db_host string ${db_host}": } }
   if $db_user      { aegir::apt::debconf { "aegir/db_user string ${db_user}": } }
+  # N.B. This will override any preseeding done in aegirvps::mysql::preseed
   if $db_password  { aegir::apt::debconf { "aegir/db_password string ${db_password}": } }
   if $admin_email  { aegir::apt::debconf { "aegir/email string ${admin_email}": } }
   if $makefile     { aegir::apt::debconf { "aegir/makefile string ${makefile}": } }
   if $web_server   { aegir::apt::debconf { "aegir/webserver string ${web_server}": } }
-
-  if $secure_mysql {
-    # Equivalent to /usr/bin/mysql_secure_installation without providing or setting a password
-    # From: http://matthewturland.com/2012/02/13/setting-up-ec2-for-drupal-with-puppet/
-    exec { 'mysql_secure_installation':
-        command => '/usr/bin/mysql -uroot -e "DELETE FROM mysql.user WHERE User=\'\'; DELETE FROM mysql.user WHERE User=\'root\' AND Host NOT IN (\'localhost\', \'127.0.0.1\', \'::1\'); DROP DATABASE IF EXISTS test; FLUSH PRIVILEGES;" mysql',
-      subscribe   => Package['mysql-server'],
-      before      => Package["aegir${real_api}"],
-    }
-  }
 
   package { "aegir${real_api}":
     ensure       => $ensure,
