@@ -1,4 +1,4 @@
-class aegirvps::mysql ($secure = TRUE) {
+class aegir::mysql ($secure = TRUE) {
 
   package {'mysql-server': ensure => present,}
 
@@ -16,7 +16,7 @@ class aegirvps::mysql ($secure = TRUE) {
     }
 
     file {'/root/.my.cnf':
-      content => template('aegirvps/my_cnf.erb'),
+      content => template('aegir/my_cnf.erb'),
       mode    => 0600,
       replace => false,
       notify  => Exec['change mysql root password'],
@@ -25,7 +25,7 @@ class aegirvps::mysql ($secure = TRUE) {
     ## See: https://labs.riseup.net/code/projects/shared-mysql/repository/revisions/master/entry/manifests/server/base.pp#L42
     file { 'setmysqlpass.sh':
       path => '/usr/local/sbin/setmysqlpass.sh',
-      source => "puppet:///modules/aegirvps/scripts/setmysqlpass.sh",
+      source => "puppet:///modules/aegir/scripts/setmysqlpass.sh",
       require => Package['mysql-server'],
       owner => root, group => 0, mode => 0500;
     }

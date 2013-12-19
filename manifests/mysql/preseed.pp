@@ -1,8 +1,8 @@
-class aegirvps::mysql::preseed {
+class aegir::mysql::preseed {
 
   file { 'preseedmysqlpass.sh':
     path => '/usr/local/sbin/preseedmysqlpass.sh',
-    source => "puppet:///modules/aegirvps/scripts/preseedmysqlpass.sh",
+    source => "puppet:///modules/aegir/scripts/preseedmysqlpass.sh",
     owner => root, group => 0, mode => 0500;
   }
 

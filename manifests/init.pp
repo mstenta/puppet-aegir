@@ -70,12 +70,12 @@ class aegir (
       'mysql': {
         # While mysql would be installed by default anyway, we do it here to
         # allow us to secure it before installing Aegir.
-        class { 'aegirvps::mysql':
+        class { 'aegir::mysql':
           secure => $secure_mysql,
           before => Package["aegir${real_api}"],
         }
-        class { 'aegirvps::mysql::preseed':
-          require => Class['aegirvps::mysql'],
+        class { 'aegir::mysql::preseed':
+          require => Class['aegir::mysql'],
         }
       }
       default: { /* Do nothing. */ }
@@ -103,7 +103,7 @@ class aegir (
   if $frontend_url { aegir::apt::debconf { "aegir/site string ${frontend_url}": } }
   if $db_host      { aegir::apt::debconf { "aegir/db_host string ${db_host}": } }
   if $db_user      { aegir::apt::debconf { "aegir/db_user string ${db_user}": } }
-  # N.B. This will override any preseeding done in aegirvps::mysql::preseed
+  # N.B. This will override any preseeding done in aegir::mysql::preseed
   if $db_password  { aegir::apt::debconf { "aegir/db_password string ${db_password}": } }
   if $admin_email  { aegir::apt::debconf { "aegir/email string ${admin_email}": } }
   if $makefile     { aegir::apt::debconf { "aegir/makefile string ${makefile}": } }
