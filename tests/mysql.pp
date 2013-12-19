@@ -1,1 +1,1 @@
-include aegirvps::mysql
+include aegir::mysql
