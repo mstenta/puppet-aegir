@@ -8,9 +8,14 @@ class aegir::mysql::preseed {
 
   exec {'preseed mysql password':
     command => '/usr/local/sbin/preseedmysqlpass.sh',
-    onlyif  => 'test -f /root/.my.cnf',
+    onlyif  => '/usr/bin/test -f /root/.my.cnf',
     require => File['preseedmysqlpass.sh'],
-    before  => Package["aegir${aegir::real_api}"],
+  }
+
+  if $aegir::real_api {
+    Exec {'preseed mysql password':
+      before  => Package["aegir${aegir::real_api}"],
+    }
   }
 
 }
