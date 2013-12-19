@@ -74,9 +74,6 @@ class aegir (
           secure => $secure_mysql,
           before => Package["aegir${real_api}"],
         }
-        class { 'aegir::mysql::preseed':
-          require => Class['aegir::mysql'],
-        }
       }
       default: { /* Do nothing. */ }
     }

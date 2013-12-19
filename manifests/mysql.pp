@@ -1,5 +1,7 @@
 class aegir::mysql ($secure = TRUE) {
 
+  include aegir::mysql::preseed
+
   package {'mysql-server': ensure => present,}
 
   service {'mysql':
