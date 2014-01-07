@@ -13,8 +13,9 @@ class aegir::mysql ($secure = TRUE) {
     # Equivalent to /usr/bin/mysql_secure_installation without providing or setting a password
     # From: http://matthewturland.com/2012/02/13/setting-up-ec2-for-drupal-with-puppet/
     exec { 'mysql_secure_installation':
-      command => '/usr/bin/mysql -uroot -e "DELETE FROM mysql.user WHERE User=\'\'; DELETE FROM mysql.user WHERE User=\'root\' AND Host NOT IN (\'localhost\', \'127.0.0.1\', \'::1\'); DROP DATABASE IF EXISTS test; FLUSH PRIVILEGES;" mysql',
-      subscribe   => Package['mysql-server'],
+      command   => '/usr/bin/mysql -uroot -e "DELETE FROM mysql.user WHERE User=\'\'; DELETE FROM mysql.user WHERE User=\'root\' AND Host NOT IN (\'localhost\', \'127.0.0.1\', \'::1\'); DROP DATABASE IF EXISTS test; FLUSH PRIVILEGES;" mysql',
+      subscribe => Package['mysql-server'],
+      require   => Exec['change mysql root password'],
     }
 
     file {'/root/.my.cnf':
