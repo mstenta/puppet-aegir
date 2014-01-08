@@ -8,9 +8,9 @@ Vagrant::Config.run do |config|
   config.vm.host_name = "aegir.test"
 
   config.vm.provision :puppet do |puppet|
-    puppet.manifests_path = "tests/functional_tests/aegir2"
+    puppet.manifests_path = "tests/functional_tests/matrix.deb"
     puppet.manifest_file = "nodes.pp"
-    puppet.module_path = [ "tests/functional_tests/aegir2/modules" ]
+    puppet.module_path = [ "tests/functional_tests/matrix.deb/modules" ]
     puppet.facter = {
         'aegir_api'        => ENV['aegir_api'],
         'drush_api'        => ENV['drush_api'],
