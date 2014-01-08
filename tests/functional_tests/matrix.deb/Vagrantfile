@@ -12,10 +12,10 @@ Vagrant::Config.run do |config|
     puppet.manifest_file = "nodes.pp"
     puppet.module_path = [ "tests/functional_tests/aegir2/modules" ]
     puppet.facter = {
-        'aegir_api'        = ENV['aegir_api'],
-        'drush_api'        = ENV['drush_api'],
-        'aegir_dist'       = ENV['aegir_dist'],
-        'aegir_web_server' = ENV['aegir_web_server'],
+        'aegir_api'        => ENV['aegir_api'],
+        'drush_api'        => ENV['drush_api'],
+        'aegir_dist'       => ENV['aegir_dist'],
+        'aegir_web_server' => ENV['aegir_web_server'],
     }
   end
 
