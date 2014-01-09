@@ -3,7 +3,7 @@
 
 Vagrant::Config.run do |config|
   config.vm.box = ENV['aegir_box'].split.first
-  config.vm.box_url = ENV['aegir_box'].split.last
+  config.vm.box_url = "http://" + ENV['aegir_box'].split.last
 
   config.vm.host_name = "aegir.test"
 
