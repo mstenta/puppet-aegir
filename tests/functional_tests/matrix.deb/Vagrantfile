@@ -1,9 +1,14 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+base_boxes = {
+  'wheezy64' => 'http://dl.dropbox.com/u/937870/VMs/wheezy64.box',
+  'raring64' => 'http://cloud-images.ubuntu.com/raring/current/raring-server-cloudimg-vagrant-amd64-disk1.box',
+}
+
 Vagrant::Config.run do |config|
-  config.vm.box = ENV['aegir_box'].split.first
-  config.vm.box_url = "http://" + ENV['aegir_box'].split.last
+  config.vm.box = ENV['aegir_box']
+  config.vm.box_url = base_boxes[ENV['aegir_box']]
 
   config.vm.host_name = "aegir.test"
 
