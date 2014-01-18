@@ -175,7 +175,17 @@ class aegir::dev (
         before      => Drush::Run['hostmaster-install'],
       }
       case $lsbdistcodename {
+        # Ubuntu 13.10+ and Debian 8+ use a new Apache configuration path.
+        'saucy',
+        'trusty',
+        'utopic',
+        'vivid',
+        'wily',
+        'xenial',
+        'yakkety',
+        'zesty',
         'jessie': { $apache_conf_filepath = '/etc/apache2/conf-enabled/aegir.conf' }
+        # Everything before that should use the old path.
         default: { $apache_conf_filepath = '/etc/apache2/conf.d/aegir.conf' }
       }
       file { $apache_conf_filepath:
