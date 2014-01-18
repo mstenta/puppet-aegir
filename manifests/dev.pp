@@ -151,11 +151,16 @@ class aegir::dev (
         require     => Package[$web_server],
         before      => Drush::Run['hostmaster-install'],
       }
-      file { '/etc/apache2/conf.d/aegir.conf':
+      file { '/etc/apache2/conf-available/aegir.conf':
         ensure  => link,
         target  => "${aegir_root}/config/apache.conf",
-        notify  => Exec['Enable mod-rewrite'],
         require => Package[$web_server],
+      }
+      file { '/etc/apache2/conf-enabled/aegir.conf':
+        ensure => link,
+        target => '/etc/apache2/conf-available/aegir.conf',
+        require => File['/etc/apache2/conf-available/aegir.conf'],
+        notify  => Exec['Enable mod-rewrite'],
         before  => Drush::Run['hostmaster-install'],
       }
     }
