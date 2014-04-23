@@ -12,14 +12,14 @@ if [ -d $SCRIPT_DIR/modules/drush ]
 then
   cd $SCRIPT_DIR/modules/drush && git pull
 else
-  git clone --branch new http://git.drupal.org/project/puppet-drush.git $SCRIPT_DIR/modules/drush
+  git clone --branch 1.0.x http://git.drupal.org/project/puppet-drush.git $SCRIPT_DIR/modules/drush
 fi
 
 if [ -d $SCRIPT_DIR/modules/aegir ]
 then
   cd $SCRIPT_DIR/modules/aegir && git pull
 else
-  git clone --branch new http://git.drupal.org/project/puppet-aegir.git $SCRIPT_DIR/modules/aegir
+  git clone --branch 1.0.x http://git.drupal.org/project/puppet-aegir.git $SCRIPT_DIR/modules/aegir
 fi
 
 if [ ! -h $SCRIPT_DIR/../../../Vagrantfile ]
