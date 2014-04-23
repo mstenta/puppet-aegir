@@ -1,4 +1,4 @@
-node "aegir2" {
+node "aegir2-unstable" {
 
   class { 'drush' :
     api  => 5,
