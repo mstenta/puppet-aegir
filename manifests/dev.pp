@@ -206,7 +206,7 @@ class aegir::dev (
     arguments  => $frontend_url,
     options    => $install_options,
     log        => '/var/aegir/install.log',
-    creates    => "${aegir_root}/hostmaster-${hostmaster_ref}/sites/${frontend_url}",
+    creates    => "${aegir_root}/hostmaster-${hostmaster_ref}",
     drush_user => $aegir_user,
     drush_home => $aegir_root,
     require    => User[$aegir_user],
