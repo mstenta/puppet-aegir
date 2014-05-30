@@ -20,6 +20,8 @@ class aegir::dev (
   $hostmaster_ref     = '7.x-3.x',
   $provision_repo     = 'http://git.drupal.org/project/provision.git',
   $provision_ref      = '7.x-3.x',
+  $provision_git_repo     = 'http://git.drupal.org/project/provision_git.git',
+  $provision_git_ref      = '7.x-3.x',
   $install_dependencies = true
   ) inherits aegir::defaults {
 
@@ -62,6 +64,25 @@ class aegir::dev (
     loglevel => 'debug',
     recurse  => true,
     require  => Drush::Git['Install provision'],
+    before   => Drush::Run['hostmaster-install'],
+  }
+
+  drush::git { 'Install provision_git':
+    git_repo   => $provision_git_repo,
+    git_branch => $provision_git_ref,
+    dir_name   => 'provision_git',
+    path       => "${aegir_root}/.drush/",
+    require    => File[ $aegir_root, "${aegir_root}/.drush", "${aegir_root}/.drush/provision"],
+    update     => $update,
+  }
+
+  file {"${aegir_root}/.drush/provision_git":
+    ensure   => present,
+    owner    => 'aegir',
+    group    => 'aegir',
+    loglevel => 'debug',
+    recurse  => true,
+    require  => Drush::Git['Install provision_git'],
     before   => Drush::Run['hostmaster-install'],
   }
 
