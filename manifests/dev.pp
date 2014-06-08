@@ -16,6 +16,7 @@ class aegir::dev (
   $update       = false,
   $platform_path      = false,
   $drush_make_version = false,
+  $make_aegir_platform  = false,
   $hostmaster_repo    = 'http://git.drupal.org/project/hostmaster.git',
   $hostmaster_ref     = '7.x-3.x',
   $provision_repo     = 'http://git.drupal.org/project/provision.git',
@@ -201,10 +202,30 @@ class aegir::dev (
   # comment out 'bind-address = 127.0.0.1' from /etc/mysql/my.cnf
   # exec /etc/init.d/mysql restart
 
+  if $make_aegir_platform != false and $makefile != false {
+    drush::run {'cc drush':
+      site_alias => '@none',
+      drush_user => $aegir_user,
+      drush_home => $aegir_root,
+      require    => Drush::Git['Install provision'],
+    }
+    # Run Drush Make ourselves, since some options won't filter down through hostmaster-install.
+    drush::make { 'Build Hostmaster platform':
+      makefile   => $makefile,
+      make_path  => $platform_path,
+      options    => ' --working-copy --no-gitinfofile',
+      drush_user => $aegir_user,
+      drush_home => $aegir_root,
+      log        => "${aegir_root}/hostmaster_make.log",
+      before     => Drush::Run['hostmaster-install'],
+      require    => Drush::Run['cc drush'],
+    }
+  }
+
   # Ref.: http://community.aegirproject.org/installing/manual#Running_hostmaster-install
 
   # Build our options
-  $default_options = " --debug --working-copy --strict=0 --no-gitinfofile --aegir_version=${hostmaster_ref}"
+  $default_options = " --debug --working-copy --aegir_version=${hostmaster_ref} --strict=0"
   if $aegir_user {        $a = " --script_user=${aegir_user}" }
   if $aegir_root {        $b = " --aegir_root=${aegir_root}" }
   if $web_group {         $c = " --web_group=${web_group}" }
@@ -227,7 +248,7 @@ class aegir::dev (
     arguments  => $frontend_url,
     options    => $install_options,
     log        => '/var/aegir/install.log',
-    creates    => "${aegir_root}/hostmaster-${hostmaster_ref}",
+    creates    => "${aegir_root}/hostmaster-${hostmaster_ref}/sites/$frontend_url",
     drush_user => $aegir_user,
     drush_home => $aegir_root,
     require    => User[$aegir_user],
