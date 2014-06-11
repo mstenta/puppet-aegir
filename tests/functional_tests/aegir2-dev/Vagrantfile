@@ -13,6 +13,10 @@ Vagrant::Config.run do |config|
     puppet.manifests_path = "tests/functional_tests/aegir2-dev"
     puppet.manifest_file = "nodes.pp"
     puppet.module_path = [ "tests/functional_tests/aegir2-dev/modules" ]
+    puppet.facter = {
+      'fqdn' => 'aegir2-dev.test'
+    }
+
   end
 
   # We can speed up subsequent rebuilds by caching the apt cache directories
