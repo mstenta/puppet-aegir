@@ -1,3 +1,5 @@
+#!/bin/bash
+
 vagrant up --provision
 if [ "$?" -ne "0" ]
 then
