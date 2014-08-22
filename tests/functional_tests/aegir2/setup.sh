@@ -27,7 +27,7 @@ then
   ln -s $SCRIPT_DIR/Vagrantfile $SCRIPT_DIR/../../../Vagrantfile
 fi
 
-if [ -e $SCRIPT_DIR/.vagrant ]
+if [ -e $CWD/.vagrant ]
 then
   cd $CWD && vagrant destroy --force
 fi
