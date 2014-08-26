@@ -20,4 +20,12 @@ Vagrant::Config.run do |config|
   # on the host machine.
   config.vm.share_folder("apt_cache", "/var/cache/apt/archives", "tmp/apt/cache", :create => true)
 
+  # Setup host machine cache for /var/aegir/.drush/cache.
+  # The aegir user does not exist on vm creation, so using the vagrant user and 777 permissions.
+  config.vm.share_folder("drush_cache", "/var/aegir/.drush/cache", "tmp/drush/cache",
+      owner: "vagrant",
+      group: "vagrant",
+      mount_options: ["dmode=0777","fmode=0777"],
+      create: true)
+
 end
