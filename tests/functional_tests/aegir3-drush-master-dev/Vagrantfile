@@ -12,7 +12,7 @@ Vagrant::Config.run do |config|
     puppet.manifest_file = "nodes.pp"
     puppet.module_path = [ "tests/functional_tests/aegir3-drush-master-dev/modules" ]
     puppet.facter = {
-      'fqdn' => 'aegir3-dev.test'
+      'fqdn' => 'aegir3-drush-master-dev.test'
     }
   end
 
