@@ -5,13 +5,6 @@ then
   exit 1
 fi
 
-vagrant ssh -c "sudo -u root -s /bin/bash -c 'service hosting-queued stop'"
-if [ "$?" -ne "0" ]
-then
-  echo "Could not stop the hosting-queued service. Leaving vm in place for forensic analysis."
-  exit 1
-fi
-
 vagrant ssh -c "sudo -u root -s /bin/bash -c 'su aegir -l -c \"COLUMNS=130 drush -y @hostmaster --debug provision-tests-run\"'"
 if [ "$?" -ne "0" ]
 then
