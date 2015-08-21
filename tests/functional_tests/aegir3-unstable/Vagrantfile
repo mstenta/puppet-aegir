@@ -7,6 +7,10 @@ Vagrant::Config.run do |config|
 
   config.vm.host_name = "aegir3-unstable.test"
 
+  config.vm.provision :shell do |bootstrap|
+    bootstrap.inline = "curl https://raw.githubusercontent.com/hashicorp/puppet-bootstrap/master/debian.sh | sudo /bin/sh"
+  end
+
   config.vm.provision :puppet do |puppet|
     puppet.manifests_path = "tests/functional_tests/aegir3-unstable"
     puppet.manifest_file = "nodes.pp"
