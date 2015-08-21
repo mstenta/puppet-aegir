@@ -12,11 +12,11 @@ Vagrant::Config.run do |config|
   end
 
   config.vm.provision :puppet do |puppet|
-    #puppet.manifests_path = "tests/functional_tests/aegir3-unstable"
-    puppet.manifests_path = "."
+    puppet.manifests_path = "tests/functional_tests/aegir3-unstable"
+    #puppet.manifests_path = "." ## for local dev, un-comment this line
     puppet.manifest_file = "nodes.pp"
-    #puppet.module_path = [ "tests/functional_tests/aegir3-unstable/modules" ]
-    puppet.module_path = [ "modules" ]
+    puppet.module_path = [ "tests/functional_tests/aegir3-unstable/modules" ]
+    #puppet.module_path = [ "modules" ] ## for local dev, un-comment this line
   end
 
   # We can speed up subsequent rebuilds by caching the apt cache directories
