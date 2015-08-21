@@ -2,4 +2,5 @@
 Vagrantfile
 !*/**/Vagrantfile
 tests/functional_tests/*/modules/*
+tests/functional_tests/*/.vagrant/*
 tmp/*
