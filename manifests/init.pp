@@ -14,16 +14,51 @@ class aegir (
   ) inherits aegir::defaults {
 
 
+
+
   case $api {
-    2, 3, '': {
+    1: {
+      $real_api = ''
+    }
+    2: {
+      $real_api = 2
+      package { 'aegir-provision':
+        ensure => absent;
+      }
+    }
+    3, '', default: {
+      $real_api = 3
+      package { [ 'aegir2-provision', 'aegir-provision']:
+        ensure => absent;
+      }
+      if !($api in $apis) {
+        warning("'${api}' is not a valid Aegir API version. Values can be '1', '2' or '3'. Defaulting to '3'.")
+      }
+    }
+  }
+
+
+  $apis = ['1', '2', '3']
+
+  case $api {
+    1: {
+      $real_api = ''
+      class{ 'drush':
+        api => 4,
+      }
+    }
+    2, 3, '', default: {
       case $api {
-        3, '': {
-          $real_api = 3
-            package { 'aegir2':
-              ensure => absent;
-            }
-        }
         2: { $real_api = 2 }
+        3, '', default: {
+          $real_api = 3
+          package { 'aegir2':
+            ensure => absent;
+          }
+          if !($api in $apis) {
+            warning("'${api}' is not a valid Aegir API version. Values can be '1', '2' or '3'. Defaulting to '3'.")
+          }
+        }
       }
       package { 'aegir':
         ensure => absent;
@@ -52,16 +87,6 @@ class aegir (
         ensure  => running,
         require => Package["aegir${real_api}"],
       }
-    }
-    1: {
-      $real_api = ''
-      class{ 'drush':
-        api => 4,
-      }
-    }
-    default: {
-      warning("'${api}' is not a valid Aegir API version. Values can be '1', '2' or '3'. Defaulting to '3'.")
-      $real_api = '3'
     }
   }
 
