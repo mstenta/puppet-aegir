@@ -1,0 +1,20 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant::Config.run do |config|
+  #config.vm.box = "ubuntu/trusty64"
+  config.vm.box = "debian/jessie64"
+
+  config.vm.host_name = "aegir3-unstable.test"
+
+  config.vm.provision :puppet do |puppet|
+    puppet.manifests_path = "tests/functional_tests/aegir3-unstable"
+    puppet.manifest_file = "nodes.pp"
+    puppet.module_path = [ "tests/functional_tests/aegir3-unstable/modules" ]
+  end
+
+  # We can speed up subsequent rebuilds by caching the apt cache directories
+  # on the host machine.
+  config.vm.share_folder("apt_cache", "/var/cache/apt/archives", "tmp/apt/cache", :create => true)
+
+end
