@@ -15,8 +15,16 @@ class aegir (
 
 
   case $api {
-    2: {
-      $real_api = 2
+    2, 3, '': {
+      case $api {
+        3, '': {
+          $real_api = 3
+            package { 'aegir2':
+              ensure => absent;
+            }
+        }
+        2: { $real_api = 2 }
+      }
       package { 'aegir':
         ensure => absent;
       }
@@ -45,15 +53,15 @@ class aegir (
         require => Package["aegir${real_api}"],
       }
     }
-    1, '': {
+    1: {
       $real_api = ''
       class{ 'drush':
         api => 4,
       }
     }
     default: {
-      warning("'${api}' is not a valid Aegir API version. Values can be '1' or '2'. Defaulting to '1'.")
-      $real_api = ''
+      warning("'${api}' is not a valid Aegir API version. Values can be '1', '2' or '3'. Defaulting to '3'.")
+      $real_api = '3'
     }
   }
 
