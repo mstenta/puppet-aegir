@@ -33,6 +33,7 @@ then
 fi
 
 cd $CWD
-vagrant up
+vagrant up --no-provision
 vagrant ssh -c"sudo aptitude install puppet -y"
 vagrant provision
+
