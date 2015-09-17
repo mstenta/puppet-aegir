@@ -4,7 +4,7 @@
 Vagrant::Config.run do |config|
   config.vm.box = "debian/jessie64"
 
-  config.vm.host_name = "aegir3-dev.test"
+  config.vm.host_name = "aegir3-dev-drush7.test"
 
   config.vm.provision :puppet do |puppet|
     puppet.manifests_path = "tests/functional_tests/aegir3-dev-drush7"
