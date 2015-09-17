@@ -12,4 +12,11 @@ node "aegir3-dev-drush7.test" {
     start_queued_service => false,
   }
 
+  drush::run { 'Clear Drush caches for Aegir':
+    command    => 'cache-clear',
+    site_alias => '@hostmaster',
+    arguments  => 'all',
+    drush_user => 'aegir',
+    drush_home => '/var/aegir',
+  }
 }
