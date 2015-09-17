@@ -9,6 +9,7 @@ node "aegir3-dev-drush7.test" {
     provision_ref  => '7.x-3.x',
     platform_path  => '/var/aegir/hostmaster-7.x-3.x',
     require        => Class['drush::git::drush'],
+    start_queued_service => false,
   }
 
 }

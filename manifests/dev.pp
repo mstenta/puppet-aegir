@@ -23,6 +23,7 @@ class aegir::dev (
   $provision_ref      = '7.x-3.x',
   $provision_git_repo     = 'http://git.drupal.org/project/provision_git.git',
   $provision_git_ref      = '7.x-3.x',
+  $start_queued_service = true,
   $install_dependencies = true
   ) inherits aegir::defaults {
 
@@ -266,14 +267,16 @@ class aegir::dev (
     mode    => 0755,
     require => Drush::Run['hostmaster-install'],
   }
-  drush::en { 'hosting_queued':
-    refreshonly => true,
-    subscribe   => File['queue daemon init script'],
-    before      => Service['hosting-queued'],
-  }
-  service { 'hosting-queued':
-    ensure  => running,
-    subscribe => File['queue daemon init script'],
+  if $start_queued_service {
+    drush::en { 'hosting_queued':
+      refreshonly => true,
+      subscribe   => File['queue daemon init script'],
+      before      => Service['hosting-queued'],
+    }
+    service { 'hosting-queued':
+      ensure  => running,
+      subscribe => File['queue daemon init script'],
+    }
   }
 
   exec {'aegir-dev login':
