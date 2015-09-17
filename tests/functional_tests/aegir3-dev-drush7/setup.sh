@@ -31,3 +31,8 @@ if [ -e $CWD/.vagrant ]
 then
   cd $CWD && vagrant destroy --force
 fi
+
+cd $CWD
+vagrant up
+vagrant ssh -c"sudo aptitude install puppet -y"
+vagrant provision
