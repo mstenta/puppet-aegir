@@ -18,5 +18,6 @@ node "aegir3-dev-drush7.test" {
     arguments  => 'all',
     drush_user => 'aegir',
     drush_home => '/var/aegir',
+    require    => Class['aegir::dev'],
   }
 }
