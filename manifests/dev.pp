@@ -173,7 +173,11 @@ class aegir::dev (
         require     => Package[$web_server],
         before      => Drush::Run['hostmaster-install'],
       }
-      file { '/etc/apache2/conf.d/aegir.conf':
+      case $lsbdistcodename {
+        'jessie': { $apache_conf_filepath = '/etc/apache2/conf-enabled/aegir.conf' }
+        default: { $apache_conf_filepath = '/etc/apache2/conf.d/aegir.conf' }
+      }
+      file { $apache_conf_filepath:
         ensure  => link,
         target  => "${aegir_root}/config/apache.conf",
         notify  => Exec['Enable mod-rewrite'],
