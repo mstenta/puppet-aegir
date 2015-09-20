@@ -1,4 +1,4 @@
-vagrant ssh -c "sudo -u root -s /bin/bash -c 'su aegir -l -c \"drush -y @hostmaster provision-tests-new-run\"'"
+vagrant ssh -c "sudo -u root -s /bin/bash -c 'su aegir -l -c \"drush -y @hostmaster provision-tests-run\"'"
 if [ "$?" -ne "0" ]
 then
   echo "'provision-tests-run' failed. Leaving vm in place for forensic analysis."
