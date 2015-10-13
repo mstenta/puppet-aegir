@@ -9,10 +9,10 @@ echo "debconf debconf/frontend select Noninteractive" | debconf-set-selections
 #echo "debconf debconf/priority select critical" | debconf-set-selections
 
 
-# From preseedmysqlpass.sh
-rootpw=$(grep password /etc/mysql/debian.cnf | head -n1 | sed -e 's/^[^=]*= *\(.*\) */\1/')
+echo mysql-server-5.5 mysql-server/root_password password PASSWORD | debconf-set-selections
+
 debconf-set-selections <<EOF
-aegir3-hostmaster aegir/db_password string $rootpw
+aegir3-hostmaster aegir/db_password string PASSWORD
 aegir3-hostmaster aegir/db_password seen  true
 aegir3-hostmaster aegir/db_user string debian-sys-maint
 aegir3-hostmaster aegir/db_host string  localhost
