@@ -10,12 +10,13 @@ echo "debconf debconf/frontend select Noninteractive" | debconf-set-selections
 
 
 echo mysql-server-5.5 mysql-server/root_password password PASSWORD | debconf-set-selections
+echo mysql-server-5.5 mysql-server/root_password_again password PASSWORD | debconf-set-selections
 
 debconf-set-selections <<EOF
 aegir3-hostmaster aegir/db_password string PASSWORD
 aegir3-hostmaster aegir/db_password seen  true
 aegir3-hostmaster aegir/db_user string debian-sys-maint
-aegir3-hostmaster aegir/db_host string  localhost
+aegir3-hostmaster aegir/db_host string localhost
 aegir3-hostmaster aegir/email string  aegir@example.com
 aegir3-hostmaster aegir/site  string  aegir.example.com
 postfix postfix/main_mailer_type select Local only
