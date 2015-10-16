@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DRUSH_BRANCH='1.0.x'
-AEGIR_BRANCH='unstable'
+AEGIR_BRANCH='1.0.x'
 CWD=`pwd`
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
