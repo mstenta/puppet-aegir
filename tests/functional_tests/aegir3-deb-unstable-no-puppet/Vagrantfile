@@ -15,7 +15,7 @@ echo mysql-server-5.5 mysql-server/root_password_again password PASSWORD | debco
 debconf-set-selections <<EOF
 aegir3-hostmaster aegir/db_password string PASSWORD
 aegir3-hostmaster aegir/db_password seen  true
-aegir3-hostmaster aegir/db_user string debian-sys-maint
+aegir3-hostmaster aegir/db_user string root
 aegir3-hostmaster aegir/db_host string localhost
 aegir3-hostmaster aegir/email string  aegir@example.com
 aegir3-hostmaster aegir/site  string  aegir.example.com
