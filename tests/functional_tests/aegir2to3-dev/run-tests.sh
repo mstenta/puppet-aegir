@@ -17,6 +17,10 @@ do_as_aegir "drush @hostmaster en --yes ctools"
 do_as_aegir "wget http://drupalcode.org/project/provision.git/blob_plain/7.x-3.x:/upgrade.sh.txt -O upgrade.sh"
 do_as_aegir "chmod \+x upgrade.sh"
 vagrant ssh -c "sudo -u root -s /bin/bash -c 'cd /usr/share/drush/; git fetch; git checkout 6.x'";
+
+# download dependend stuff
+vagrant ssh -c "sudo -u root -s /bin/bash -c '/usr/share/drush/drush --version > /dev/null'";
+
 yes | do_as_aegir "./upgrade.sh"
 
 
