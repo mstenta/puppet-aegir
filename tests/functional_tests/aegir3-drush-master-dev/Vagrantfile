@@ -2,10 +2,12 @@
 # vi: set ft=ruby :
 
 Vagrant::Config.run do |config|
-  config.vm.box = "wheezy64"
-  config.vm.box_url = "http://dl.dropbox.com/u/937870/VMs/wheezy64.box"
+  config.vm.box = "debian/jessie64"
+  config.vm.box_url = "https://atlas.hashicorp.com/debian/jessie64"
 
   config.vm.host_name = "aegir3-drush-master-dev.test"
+
+  config.vm.provision "shell", inline: "apt-get update; apt-get install --yes puppet"
 
   config.vm.provision :puppet do |puppet|
     puppet.manifests_path = "tests/functional_tests/aegir3-drush-master-dev"
