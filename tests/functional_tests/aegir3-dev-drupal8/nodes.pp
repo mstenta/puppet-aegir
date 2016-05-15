@@ -1,8 +1,8 @@
 node "aegir3-dev-drupal8.test" {
 
   class { 'drush::git::drush' :
-    #git_branch => '8.x',
-    git_branch => 'master',
+    git_branch => '8.x',
+    #git_branch => 'master',
   }
 
   class { 'aegir::dev' :
