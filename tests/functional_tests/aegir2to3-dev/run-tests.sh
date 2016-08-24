@@ -16,7 +16,6 @@ function do_as_aegir {
 do_as_aegir "drush @hostmaster en --yes ctools"
 do_as_aegir "drush @hostmaster pm-disable --yes hosting_platform_pathauto"
 do_as_aegir "drush @hostmaster pm-disable --yes install_profile_api"
-do_as_aegir "drush @hostmaster pm-disable --yes jquery_ui"
 do_as_aegir "cp /vagrant/local.settings.php /var/aegir/hostmaster-6.x-2.x/sites/aegir2to3-dev.test/local.settings.php"
 
 
