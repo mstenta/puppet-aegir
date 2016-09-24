@@ -35,7 +35,7 @@ fi
 cd $CWD
 vagrant up --no-provision
 vagrant ssh -c"sudo apt-get update"
-vagrant ssh -c"echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections"
+vagrant ssh -c"echo 'debconf debconf/frontend select Noninteractive' | sudo debconf-set-selections"
 vagrant ssh -c"sudo apt-get -y dist-upgrade"
 vagrant ssh -c"sudo aptitude install puppet -y"
 vagrant provision
