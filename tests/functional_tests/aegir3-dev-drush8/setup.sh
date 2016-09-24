@@ -35,7 +35,7 @@ fi
 cd $CWD
 vagrant up --no-provision
 vagrant ssh -c"sudo apt-get update"
-vagrant ssh -c"sudo apt-get -y upgrade libssl1.0.0 openssl"
+vagrant ssh -c"sudo apt-get -y upgrade"
 vagrant ssh -c"sudo aptitude install puppet -y"
 vagrant provision
 
